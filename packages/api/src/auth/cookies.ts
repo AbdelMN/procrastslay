@@ -11,7 +11,7 @@ export function setSessionTokenCookie(
     httpOnly: true,
     sameSite: 'Lax',
     path: '/',
-    expires: expiresAt,Ò
+    expires: expiresAt,
     secure: true,
   });
 }

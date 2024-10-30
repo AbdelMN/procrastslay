@@ -14,7 +14,7 @@ export function generateSessionToken(): string {
   return token;
 }
 
-export async function createSession(Ò
+export async function createSession(
   token: string,
   userId: number,
 ): Promise<Session> {
