@@ -7,7 +7,7 @@ import { getCookie } from 'hono/cookie';
 import type { OAuth2Tokens } from 'arctic';
 import { prisma } from '../prisma';
 const app = new Hono();
-app.get('/auth/callback', async (c: Context) => {
+app.get('/', async (c: Context) => {
   const { code, state } = c.req.query();
 
   const storedState = getCookie(c, 'github_oauth_state');
@@ -25,19 +25,21 @@ app.get('/auth/callback', async (c: Context) => {
   } catch (e) {
     return c.text('Failed to get access token', 400);
   }
-
+  console.log("toksen" + tokens.accessToken());  
   const githubResponse = await fetch(
     // TODO: use the github client
     'https://api.github.com/user',
     {
       headers: {
-        Authorization: `token ${tokens.accessToken}`,
+        Authorization: `token ${tokens.accessToken()}`,
       },
     },
   );
 
   const githubUser = await githubResponse.json();
+
   const githubId: number = githubUser.id;
+  console.log(githubUser);
   const githubUsername: string = githubUser.login;
   const existingUser = await prisma.user.findUnique({
     where: {
@@ -48,20 +50,26 @@ app.get('/auth/callback', async (c: Context) => {
   if (existingUser !== null) {
     const sessionToken = generateSessionToken();
     const session = await createSession(sessionToken, existingUser.id);
-    await setSessionTokenCookie(c, sessionToken, session.expiresAt);
-
+    setSessionTokenCookie(c, sessionToken, session.expiresAt);
+    console.log(existingUser);
     return c.redirect('/');
   }
 
-  await prisma.user.create({
+  const user =await prisma.user.create({
     data: {
       githubId,
       githubUsername,
     },
   });
-  const session = await createSession(githubUser.login);
-  setSessionTokenCookie(c, session.token, session.expiresAt);
+  console.log("user:" + user);
+  
+  const sessionToken = generateSessionToken();
+  const session = await createSession(sessionToken,user.id);
+  setSessionTokenCookie(c, sessionToken, session.expiresAt);
+  console.log("session:" + session);
   return c.redirect('/');
 });
 
 export default app;
+
+
