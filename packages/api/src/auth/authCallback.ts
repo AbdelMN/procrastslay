@@ -52,7 +52,7 @@ app.get('/', async (c: Context) => {
     const session = await createSession(sessionToken, existingUser.id);
     setSessionTokenCookie(c, sessionToken, session.expiresAt);
     console.log(existingUser);
-    return c.redirect('/');
+    return c.redirect('http://localhost:5173/');
   }
 
   const user =await prisma.user.create({
@@ -67,7 +67,7 @@ app.get('/', async (c: Context) => {
   const session = await createSession(sessionToken,user.id);
   setSessionTokenCookie(c, sessionToken, session.expiresAt);
   console.log("session:" + session);
-  return c.redirect('/');
+  return c.redirect('http://localhost:5173/');
 });
 
 export default app;
