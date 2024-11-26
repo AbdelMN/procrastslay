@@ -9,7 +9,7 @@ import {
   QueryClientProvider,
 } from '@tanstack/react-query'
 const queryClient = new QueryClient()
-
+import { CookiesProvider } from 'react-cookie';
 import { routeTree } from './routeTree.gen'
 import { AuthProvider, useAuth } from './auth'
 
@@ -36,6 +36,7 @@ function InnerApp() {
 
 function App() {
   return (
+    <CookiesProvider defaultSetOptions={{ path: '/' }}>
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
       
@@ -43,6 +44,7 @@ function App() {
         <Provider> <InnerApp /></Provider>
       </AuthProvider>
     </QueryClientProvider>
+    </CookiesProvider>
   )
 }
 
@@ -52,7 +54,9 @@ if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement)
   root.render(
     <React.StrictMode>
+      
       <App />
+     
     </React.StrictMode>,
   )
 }

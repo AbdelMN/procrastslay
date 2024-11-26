@@ -1,11 +1,12 @@
 import { Hono } from 'hono';
 import { generateState } from 'arctic';
 import { github } from './github';
-import { setCookie } from 'hono/cookie';
-
+import { getCookie, setCookie } from 'hono/cookie';
+import { validateSessionToken } from './sessions';
+import { deleteSessionTokenCookie } from './cookies';
 const app = new Hono();
 
-app.get('/', async (c) => {
+app.get('/github', async (c) => {
   const state = generateState();
   const url = github.createAuthorizationURL(state, []);
 
@@ -19,4 +20,15 @@ app.get('/', async (c) => {
   return c.redirect(url.toString());
 });
 
+app.get('/session', async (c) => {
+  const session = getCookie(c, 'session');
+  const user = await validateSessionToken(session);
+  console.log(user);
+  return c.json({ user });
+});
+
+app.get('/logout', async (c) => {
+  deleteSessionTokenCookie(c);
+  return c.redirect('http://localhost:5173/');
+});
 export default app;
