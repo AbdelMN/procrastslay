@@ -22,9 +22,12 @@ app.get('/github', async (c) => {
 
 app.get('/session', async (c) => {
   const session = getCookie(c, 'session');
+  if (!session) {
+    return c.json({ user: null }); // Ou une réponse d'erreur appropriée
+  }
   const user = await validateSessionToken(session);
   console.log(user);
-  return c.json({ user });
+  return c.json({ user: user.user });
 });
 
 app.get('/logout', async (c) => {

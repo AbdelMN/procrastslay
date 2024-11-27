@@ -3,16 +3,23 @@ import React, { useCallback, useContext, createContext } from 'react';
 
 import ky from 'ky';
 
-const fetchSession = async () => {
+const fetchSession = async (): Promise<SessionData> => {
   const response = await ky('http://localhost:3000/auth/session', {
     credentials: 'include',
   });
 
   return response.json();
 };
+interface SessionData {
+  user: {
+    id: string;
+    githubId: string;
+    githubUsername: string;
+  } | null;
+}
 export interface AuthContext {
   isLoggedIn: boolean;
-  user: { id: string; name: string } | null;
+  user: SessionData['user'];
   login: () => Promise<void>;
   logout: () => Promise<void>;
 }
@@ -28,7 +35,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     window.location.href = 'http://localhost:3000/auth/logout';
   }, []);
 
-  const { data, isError, isLoading, error } = useQuery({
+  const { data, isError, isLoading, error } = useQuery<SessionData>({
     queryKey: ['session'],
     queryFn: fetchSession,
     enabled: true,
@@ -45,7 +52,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return <div>Erreur : Impossible de récupérer les données</div>;
   }
 
-  const user = data?.user.user || null;
+  const user = data?.user || null;
   const isLoggedIn = !!user;
 
   console.log(user);
@@ -56,6 +63,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     </AuthContext.Provider>
   );
 };
+// eslint-disable-next-line react-refresh/only-export-components
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) {
