@@ -2,7 +2,7 @@ import { serve } from '@hono/node-server';
 
 import { Hono } from 'hono';
 import authRoute from './auth/auth';
-import callbackRoute from './auth/authCallback';
+import callbackRoute from './auth/notionCallback';
 const app = new Hono({ strict: false }).basePath('/');
 
 app.route('/auth/', authRoute);

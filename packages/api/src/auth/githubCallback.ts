@@ -25,7 +25,7 @@ app.get('/', async (c: Context) => {
   } catch (e) {
     return c.text('Failed to get access token', 400);
   }
-  console.log("toksen" + tokens.accessToken());  
+  console.log('toksen' + tokens.accessToken());
   const githubResponse = await fetch(
     // TODO: use the github client
     'https://api.github.com/user',
@@ -55,21 +55,19 @@ app.get('/', async (c: Context) => {
     return c.redirect('http://localhost:5173/');
   }
 
-  const user =await prisma.user.create({
+  const user = await prisma.user.create({
     data: {
       githubId,
       githubUsername,
     },
   });
-  console.log("user:" + user);
-  
+  console.log('user:' + user);
+
   const sessionToken = generateSessionToken();
-  const session = await createSession(sessionToken,user.id);
+  const session = await createSession(sessionToken, user.id);
   setSessionTokenCookie(c, sessionToken, session.expiresAt);
-  console.log("session:" + session);
-  return c.redirect('http://localhost:5173/');
+  console.log('session:' + session);
+  return c.redirect('http://localhost:5173/dashboard');
 });
 
 export default app;
-
-

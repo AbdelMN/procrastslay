@@ -1,17 +1,9 @@
-import * as React from 'react'
-import {
-  createFileRoute,
-  redirect,
-  useRouter,
-  useRouterState,
-} from '@tanstack/react-router'
-import { z } from 'zod'
-import { Button } from "@/components/ui/button"
-import { useAuth } from '../auth'
-import { sleep } from '../utils'
+import * as React from 'react';
+import { createFileRoute, redirect } from '@tanstack/react-router';
+import { z } from 'zod';
+import { Button } from '@/components/ui/button';
 
-// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-const fallback = '/dashboard' as const
+const fallback = '/dashboard' as const;
 
 export const Route = createFileRoute('/login')({
   validateSearch: z.object({
@@ -19,15 +11,33 @@ export const Route = createFileRoute('/login')({
   }),
   beforeLoad: ({ context, search }) => {
     if (context.auth.isLoggedIn) {
-      throw redirect({ to: search.redirect || fallback })
+      throw redirect({ to: search.redirect || fallback });
     }
   },
   component: LoginComponent,
-})
+});
 
 function LoginComponent() {
-    return (
-        <div>
-          <Button onClick={() => window.location.href = 'http://localhost:3000/auth/github'}>Login</Button>
-        </div>
-)}
+  return (
+    <>
+      <div>
+        <Button
+          onClick={() =>
+            (window.location.href = 'http://localhost:3000/auth/github')
+          }
+        >
+          Login
+        </Button>
+      </div>
+      <div>
+        <Button
+          onClick={() =>
+            (window.location.href = 'http://localhost:3000/auth/notion')
+          }
+        >
+          Notion
+        </Button>
+      </div>
+    </>
+  );
+}
