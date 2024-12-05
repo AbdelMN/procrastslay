@@ -9,9 +9,9 @@ import { prisma } from '../prisma';
 const app = new Hono();
 app.get('/', async (c: Context) => {
   const { code, state } = c.req.query();
-  console.log(state);
+
   const storedState = getCookie(c, 'notion_oauth_state');
-  console.log(storedState);
+
   if (storedState !== state) {
     return c.text('Invalid state', 400);
   }
@@ -36,9 +36,10 @@ app.get('/', async (c: Context) => {
 
   const notionUser = await notionResponse.json();
 
-  const notionId: number = notionUser.bot.owner.user.id;
-  console.log(notionUser.bot.owner.user.id);
+  const notionId: string = notionUser.bot.owner.user.id;
+
   const notionUsername: string = notionUser.bot.owner.user.name;
+  const notionAccessToken: string = tokens.accessToken();
   const existingUser = await prisma.user.findUnique({
     where: {
       notionId,
@@ -50,6 +51,7 @@ app.get('/', async (c: Context) => {
     const session = await createSession(sessionToken, existingUser.id);
     setSessionTokenCookie(c, sessionToken, session.expiresAt);
     console.log(existingUser);
+
     return c.redirect('http://localhost:5173/dashboard');
   }
 
@@ -57,14 +59,15 @@ app.get('/', async (c: Context) => {
     data: {
       notionId,
       notionUsername,
+      notionAccessToken,
     },
   });
   console.log('user:' + user);
-
+  console.log(user.notionAccessToken);
   const sessionToken = generateSessionToken();
   const session = await createSession(sessionToken, user.id);
   setSessionTokenCookie(c, sessionToken, session.expiresAt);
-  console.log('session:' + session);
+
   return c.redirect('http://localhost:5173/dashboard');
 });
 
