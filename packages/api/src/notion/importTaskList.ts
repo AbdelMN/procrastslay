@@ -24,8 +24,11 @@ app.get('/', async (c) => {
       });
 
       const dbData = await dbResponse.json();
-
-      console.log(dbData.results);
+      const returnDb = dbData.results.map((db) => ({
+        id: db.id,
+        title: db.title[0].text.content,
+      }));
+      console.log(returnDb);
     }
   }
 });

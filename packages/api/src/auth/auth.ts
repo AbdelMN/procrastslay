@@ -46,4 +46,5 @@ app.get('/logout', async (c) => {
   deleteSessionTokenCookie(c);
   return c.redirect('http://localhost:5173/');
 });
+
 export default app;
