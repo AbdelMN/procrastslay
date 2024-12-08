@@ -19,6 +19,7 @@ model User {
   notionId String @unique
   notionUsername String
   notionAccessToken String
+  databases Databases[]
 }
 
 model Session {
@@ -26,6 +27,15 @@ model Session {
   userId    Int
   expiresAt DateTime
 
+  user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
+}
+
+model Databases{
+  id Int @id @default(autoincrement())
+  type String
+  notionDbId String
+  notionDbName String
+  userId Int
   user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
 }
 
