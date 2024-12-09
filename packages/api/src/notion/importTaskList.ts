@@ -55,16 +55,24 @@ app.post('/', async (c) => {
       const dbData = await notionApiResponse.json();
       const notionDbName: string = dbData.title[0].text.content;
       const type = 'notion';
-      const database = await prisma.databases.create({
-        data: {
-          type,
-          notionDbId,
-          notionDbName,
-          userId,
+      const existingDb = await prisma.databases.findUnique({
+        where: {
+          notionDbId: notionDbId,
         },
       });
-      console.log(database);
+      if (existingDb !== null) {
+        const database = await prisma.databases.create({
+          data: {
+            type,
+            notionDbId,
+            notionDbName,
+            userId,
+          },
+        });
+        console.log(database);
+      }
     }
   }
 });
+
 export default app;

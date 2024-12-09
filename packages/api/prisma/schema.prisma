@@ -33,7 +33,7 @@ model Session {
 model Databases{
   id Int @id @default(autoincrement())
   type String
-  notionDbId String
+  notionDbId String @unique
   notionDbName String
   userId Int
   user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
