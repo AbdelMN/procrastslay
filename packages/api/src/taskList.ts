@@ -19,4 +19,30 @@ app.get('/', async (c) => {
   }
 });
 
+app.post('/', async (c) => {
+  const body = await c.req.json();
+  const session = getCookie(c, 'session');
+  if (session) {
+    const user = await validateSessionToken(session);
+    if (user.user) {
+      const accessToken = user.user.notionAccessToken;
+      const dbId = body.db.notionDbId;
+      console.log(dbId);
+      const notionApiResponse = await fetch(
+        `https://api.notion.com/v1/databases/${dbId}/query`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+            'Notion-Version': '2022-06-28',
+          },
+        },
+      );
+      const dbData = await notionApiResponse.json();
+      console.log(dbData.results[2].properties.Task);
+    }
+  }
+});
+
 export default app;
