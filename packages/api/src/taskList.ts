@@ -39,8 +39,20 @@ app.post('/', async (c) => {
           },
         },
       );
+
       const dbData = await notionApiResponse.json();
-      console.log(dbData.results[2].properties.Task);
+
+      const titles = dbData.results.map((page: any) => {
+        const titleProperty: any = Object.values(page.properties).find(
+          (property: any) => property.type === 'title',
+        );
+
+        if (titleProperty.title && titleProperty.title.length > 0) {
+          return { title: titleProperty.title[0].plain_text };
+        }
+        return { title: 'Untitled' };
+      });
+      return c.json(titles);
     }
   }
 });
