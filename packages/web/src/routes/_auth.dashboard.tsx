@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-
+import TaskList from '../components/tasks/tasklist';
 import { useAuth } from '../auth';
 
 export const Route = createFileRoute('/_auth/dashboard')({
@@ -11,5 +11,5 @@ function DashboardPage() {
   if (!auth.user) {
     return <p> Vous n'êtes pas connecté </p>;
   }
-  return <p>Bonjour {auth.user.githubUsername}</p>;
+  return <TaskList tasklist={'test'} />;
 }
