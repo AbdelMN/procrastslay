@@ -14,7 +14,14 @@ app.get('/', async (c) => {
           userId: user.user.id,
         },
       });
-      console.log(result);
+      const tasklist = result.map((tasklist: any) => {
+        return {
+          title: tasklist.notionDbName,
+          type: tasklist.type,
+          id: tasklist.id,
+        };
+      });
+      return c.json(tasklist);
     }
   }
 });
