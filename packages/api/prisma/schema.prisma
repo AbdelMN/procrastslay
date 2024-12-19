@@ -14,29 +14,48 @@ datasource db {
 }
 
 model User {
-  id       Int       @id @default(autoincrement())
-  sessions Session[]
-  notionId String @unique
-  notionUsername String
-  notionAccessToken String
-  databases Databases[]
+  id                Int        @id @default(autoincrement())
+  notionId          String?    @unique
+  notionUsername    String?
+  notionAccessToken String?
+  tasks             Task[]
+  habits            Habit[]
+  databases         Tasklist[]
 }
 
-model Session {
-  id        String   @id
-  userId    Int
-  expiresAt DateTime
-
-  user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
-}
-
-model Databases{
+model Tasklist {
   id Int @id @default(autoincrement())
-  type String
-  notionDbId String @unique
-  notionDbName String
+
+  type   String
+  tasks  Task[]
   userId Int
-  user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
+  user   User   @relation(references: [id], fields: [userId], onDelete: Cascade)
 }
 
+model Task {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String?
+  dueDate     DateTime?
+  completed   Boolean   @default(false)
+  tasklistId  Int?
+  tasklist    Tasklist? @relation(fields: [tasklistId], references: [id])
+  subtasks
+  userId      Int
+  user        User      @relation(references: [id], fields: [userId], onDelete: Cascade)
+}
 
+model Habit {
+  id             Int      @id @default(autoincrement())
+  userId         Int
+  name           String
+  frequencyType  String
+  frequencyValue Int?
+  days           String?
+  completionMode String
+  goalValue      Int?
+  unit           String?
+  createdAt      DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
