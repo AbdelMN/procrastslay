@@ -21,6 +21,15 @@ model User {
   tasks             Task[]
   habits            Habit[]
   tasklists         Tasklist[]
+  Session           Session[]
+}
+
+model Session {
+  id        String   @id
+  userId    Int
+  expiresAt DateTime
+
+  user User @relation(references: [id], fields: [userId], onDelete: Cascade)
 }
 
 model Tasklist {
