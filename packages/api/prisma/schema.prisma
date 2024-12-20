@@ -20,7 +20,7 @@ model User {
   notionAccessToken String?
   tasks             Task[]
   habits            Habit[]
-  databases         Tasklist[]
+  tasklists         Tasklist[]
 }
 
 model Tasklist {
@@ -36,13 +36,22 @@ model Task {
   id          Int       @id @default(autoincrement())
   title       String
   description String?
+  difficulty  Int
   dueDate     DateTime?
   completed   Boolean   @default(false)
   tasklistId  Int?
   tasklist    Tasklist? @relation(fields: [tasklistId], references: [id])
-  subtasks
+  subtasks    Subtask[]
   userId      Int
   user        User      @relation(references: [id], fields: [userId], onDelete: Cascade)
+}
+
+model Subtask {
+  id           Int     @id @default(autoincrement())
+  title        String
+  completed    Boolean @default(false)
+  parentTaskId Int
+  parentTask   Task    @relation(references: [id], fields: [parentTaskId], onDelete: Cascade)
 }
 
 model Habit {
