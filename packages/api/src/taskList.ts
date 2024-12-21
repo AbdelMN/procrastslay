@@ -32,6 +32,7 @@ app.post('/', async (c) => {
   if (session) {
     const user = await validateSessionToken(session);
     if (user.user) {
+      const ti;
       return c.json(titles);
     }
   }
