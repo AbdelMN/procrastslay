@@ -32,33 +32,6 @@ app.post('/', async (c) => {
   if (session) {
     const user = await validateSessionToken(session);
     if (user.user) {
-      const accessToken = user.user.notionAccessToken;
-      const dbId = body.db.notionDbId;
-      console.log(dbId);
-      const notionApiResponse = await fetch(
-        `https://api.notion.com/v1/databases/${dbId}/query`,
-        {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
-            'Notion-Version': '2022-06-28',
-          },
-        },
-      );
-
-      const dbData = await notionApiResponse.json();
-
-      const titles = dbData.results.map((page: any) => {
-        const titleProperty: any = Object.values(page.properties).find(
-          (property: any) => property.type === 'title',
-        );
-
-        if (titleProperty.title && titleProperty.title.length > 0) {
-          return { title: titleProperty.title[0].plain_text };
-        }
-        return { title: 'Untitled' };
-      });
       return c.json(titles);
     }
   }

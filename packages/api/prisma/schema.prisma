@@ -35,7 +35,6 @@ model Session {
 model Tasklist {
   id Int @id @default(autoincrement())
 
-  type   String
   tasks  Task[]
   userId Int
   user   User   @relation(references: [id], fields: [userId], onDelete: Cascade)
