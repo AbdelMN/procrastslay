@@ -9,12 +9,12 @@ app.get('/', async (c) => {
   if (session) {
     const user = await validateSessionToken(session);
     if (user.user) {
-      const result = await prisma.tasklist.findMany({
+      const result = await prisma.task.findMany({
         where: {
           userId: user.user.id,
         },
       });
-      console.log(result);
+      return c.json(result);
     }
   }
 });
@@ -26,15 +26,18 @@ app.post('/', async (c) => {
     const user = await validateSessionToken(session);
     if (user.user) {
       const title = body.title;
+      const difficulty: number = body.difficulty;
+
       const userId = user.user.id;
 
-      const tasklist = await prisma.tasklist.create({
+      const tasklist = await prisma.task.create({
         data: {
           title,
+          difficulty,
           userId,
         },
       });
-      console.log(tasklist);
+      return c.json(tasklist);
     }
   }
 });
