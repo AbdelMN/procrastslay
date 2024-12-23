@@ -1,6 +1,7 @@
 import { Box, Button, VStack } from '@chakra-ui/react';
 import { FaHouse, FaSquarePollVertical, FaClock } from 'react-icons/fa6';
 import { Separator } from '@chakra-ui/react';
+import TaskListNav from './TasklistNav';
 const SidebarMenu = () => (
   <VStack>
     <Button
@@ -46,6 +47,7 @@ const Sidebar = () => {
     >
       <SidebarMenu />
       <Separator />
+      <TaskListNav />
     </Box>
   );
 };
