@@ -14,7 +14,7 @@ app.get('/', async (c) => {
           userId: user.user.id,
         },
       });
-      console.log(result);
+      return c.json(result);
     }
   }
 });
