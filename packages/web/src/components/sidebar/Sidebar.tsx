@@ -38,6 +38,7 @@ const Sidebar = () => {
     <Box
       as="nav"
       position="sticky"
+      overflowY={'scroll'}
       left={0}
       p={5}
       w="200px"
