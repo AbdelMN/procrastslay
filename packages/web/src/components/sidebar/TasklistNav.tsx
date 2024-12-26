@@ -1,5 +1,19 @@
-import { Flex, Box, Button, Collapsible, Input, Stack } from '@chakra-ui/react';
-import { FaChevronRight, FaChevronDown, FaCirclePlus } from 'react-icons/fa6';
+import {
+  Flex,
+  Box,
+  Button,
+  Collapsible,
+  Input,
+  Stack,
+  Text,
+  DialogFooter,
+} from '@chakra-ui/react';
+import {
+  FaChevronRight,
+  FaChevronDown,
+  FaCirclePlus,
+  FaEllipsis,
+} from 'react-icons/fa6';
 import { useState } from 'react';
 import ky from 'ky';
 import { useQuery } from '@tanstack/react-query';
@@ -13,6 +27,13 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Field } from '@/components/ui/field';
+
+import {
+  MenuContent,
+  MenuItem,
+  MenuRoot,
+  MenuTrigger,
+} from '@/components/ui/menu';
 import { useForm } from 'react-hook-form';
 const fetchTasklist = async () => {
   const response = await ky('http://localhost:3000/tasklist', {
@@ -31,6 +52,15 @@ const postTaskList = async (title: string) => {
   return response;
 };
 
+const deleteTasklist = async (id: number) => {
+  const response = await ky
+    .post('http://localhost:3000/tasklist/delete', {
+      credentials: 'include',
+      json: { id: id },
+    })
+    .json();
+  return response;
+};
 const TaskListNav = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -103,7 +133,50 @@ const TaskListNav = () => {
       <Collapsible.Content>
         <Flex direction={'column'}>
           {data && // Vérifie que data existe avant de mapper
-            data.map((list) => <Button key={list.id}>{list.title}</Button>)}
+            data.map((list) => (
+              <Button justifyContent={'space-between'} key={list.id}>
+                {list.title}{' '}
+                <MenuRoot>
+                  <MenuTrigger asChild>
+                    <FaEllipsis />
+                  </MenuTrigger>
+                  <MenuContent>
+                    <MenuItem value="edit">Edit</MenuItem>
+
+                    <MenuItem
+                      value="delete"
+                      color="fg.error"
+                      _hover={{ bg: 'bg.error', color: 'fg.error' }}
+                      onClick={() => console.log(list.id)}
+                    >
+                      <DialogRoot placement="center">
+                        <DialogTrigger>
+                          <Text>Delete...</Text>
+                        </DialogTrigger>
+                        <DialogContent
+                          onClick={(event) => {
+                            event.stopPropagation();
+                          }}
+                        >
+                          <DialogHeader>
+                            <DialogTitle>Delete Tasklist</DialogTitle>
+                          </DialogHeader>
+                          <DialogBody pb="8">
+                            Are you sure you want to delete this tasklist ?
+                          </DialogBody>
+                          <DialogCloseTrigger />
+                          <DialogFooter>
+                            <Button onClick={() => deleteTasklist(list.id)}>
+                              Delete
+                            </Button>
+                          </DialogFooter>
+                        </DialogContent>
+                      </DialogRoot>
+                    </MenuItem>
+                  </MenuContent>
+                </MenuRoot>
+              </Button>
+            ))}
         </Flex>
       </Collapsible.Content>
     </Collapsible.Root>
