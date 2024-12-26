@@ -38,5 +38,23 @@ app.post('/', async (c) => {
     }
   }
 });
+app.post('/delete', async (c) => {
+  const body = await c.req.json();
+  const session = getCookie(c, 'session');
+  if (session) {
+    const user = await validateSessionToken(session);
+    if (user.user) {
+      const id = body.id;
+      const userId = user.user.id;
 
+      const tasklist = await prisma.tasklist.delete({
+        where: {
+          id: id,
+          userId: user.user.id,
+        },
+      });
+      console.log(tasklist);
+    }
+  }
+});
 export default app;
