@@ -39,6 +39,7 @@ const fetchTasklist = async () => {
   const response = await ky('http://localhost:3000/tasklist', {
     credentials: 'include',
   });
+  console.log(response);
   return response.json();
 };
 
@@ -49,6 +50,7 @@ const postTaskList = async (title: string) => {
       json: { title: title },
     })
     .json();
+
   return response;
 };
 
@@ -59,11 +61,13 @@ const deleteTasklist = async (id: number) => {
       json: { id: id },
     })
     .json();
+
   return response;
 };
 const TaskListNav = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const { data, refetch } = useQuery({
     queryKey: ['tasklist'],
     queryFn: fetchTasklist,
@@ -83,11 +87,17 @@ const TaskListNav = () => {
     setIsDialogOpen(false);
     refetch();
   });
+  const onClickDelete = (id) => {
+    deleteTasklist(id);
+    setIsDeleteOpen(false);
+    refetch();
+  };
   return (
     <Collapsible.Root
       onOpenChange={(open) => {
         console.log(open);
         setIsOpen(open.open);
+        console.log(data);
       }}
     >
       <Collapsible.Trigger paddingY="3">
@@ -132,7 +142,7 @@ const TaskListNav = () => {
       </Collapsible.Trigger>
       <Collapsible.Content>
         <Flex direction={'column'}>
-          {data && // Vérifie que data existe avant de mapper
+          {data &&
             data.map((list) => (
               <Button justifyContent={'space-between'} key={list.id}>
                 {list.title}{' '}
@@ -147,11 +157,22 @@ const TaskListNav = () => {
                       value="delete"
                       color="fg.error"
                       _hover={{ bg: 'bg.error', color: 'fg.error' }}
-                      onClick={() => console.log(list.id)}
                     >
-                      <DialogRoot placement="center">
-                        <DialogTrigger>
-                          <Text>Delete...</Text>
+                      <DialogRoot
+                        onOpenChange={(isOpen) => {
+                          setIsDeleteOpen(isOpen.open);
+                        }}
+                        placement="center"
+                      >
+                        <DialogTrigger asChild>
+                          <Text
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              setIsDeleteOpen(true);
+                            }}
+                          >
+                            Delete...
+                          </Text>
                         </DialogTrigger>
                         <DialogContent
                           onClick={(event) => {
@@ -162,13 +183,19 @@ const TaskListNav = () => {
                             <DialogTitle>Delete Tasklist</DialogTitle>
                           </DialogHeader>
                           <DialogBody pb="8">
-                            Are you sure you want to delete this tasklist ?
+                            Are you sure you want to delete this tasklist?
                           </DialogBody>
-                          <DialogCloseTrigger />
                           <DialogFooter>
-                            <Button onClick={() => deleteTasklist(list.id)}>
+                            <Button
+                              onClick={() => {
+                                onClickDelete(list.id);
+                              }}
+                            >
                               Delete
                             </Button>
+                            <DialogCloseTrigger asChild>
+                              <Button variant="ghost">Cancel</Button>
+                            </DialogCloseTrigger>
                           </DialogFooter>
                         </DialogContent>
                       </DialogRoot>
