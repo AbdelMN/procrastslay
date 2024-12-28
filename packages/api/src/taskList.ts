@@ -57,4 +57,27 @@ app.post('/delete', async (c) => {
     }
   }
 });
+app.patch('/:id', async (c) => {
+  const { id } = c.req.param();
+  const body = await c.req.json();
+  const session = getCookie(c, 'session');
+  if (session) {
+    const user = await validateSessionToken(session);
+    if (user.user) {
+      const title = body.title;
+
+      const userId = user.user.id;
+      const editedTaskList = await prisma.tasklist.update({
+        where: {
+          id: +id,
+          userId: user.user.id,
+        },
+        data: {
+          title: title,
+        },
+      });
+      console.log(title);
+    }
+  }
+});
 export default app;
