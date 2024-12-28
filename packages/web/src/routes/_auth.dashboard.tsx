@@ -1,14 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router';
-import TaskList from '../components/tasks/tasklist';
-import { useAuth } from '../auth';
-import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
 
-import { Box, Flex } from '@chakra-ui/react';
+import { useAuth } from '../auth';
+
+import { Box } from '@chakra-ui/react';
 export const Route = createFileRoute('/_auth/dashboard')({
   component: DashboardPage,
 });
-import ky from 'ky';
 
 function DashboardPage() {
   const auth = useAuth();
