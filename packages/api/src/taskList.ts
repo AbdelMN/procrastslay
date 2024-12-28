@@ -10,6 +10,11 @@ app.get('/', async (c) => {
     const user = await validateSessionToken(session);
     if (user.user) {
       const result = await prisma.tasklist.findMany({
+        orderBy: [
+          {
+            id: 'asc',
+          },
+        ],
         where: {
           userId: user.user.id,
         },
@@ -34,7 +39,7 @@ app.post('/', async (c) => {
           userId,
         },
       });
-      console.log(tasklist);
+      return c.json(tasklist);
     }
   }
 });
@@ -53,7 +58,7 @@ app.post('/delete', async (c) => {
           userId: user.user.id,
         },
       });
-      console.log(tasklist);
+      return c.json(tasklist);
     }
   }
 });
@@ -76,7 +81,7 @@ app.patch('/:id', async (c) => {
           title: title,
         },
       });
-      console.log(title);
+      return c.json(editedTaskList);
     }
   }
 });
