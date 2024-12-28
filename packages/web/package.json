@@ -12,6 +12,7 @@
   "dependencies": {
     "@chakra-ui/react": "^3.0.2",
     "@emotion/react": "^11.13.3",
+    "@tanstack/react-form": "^0.40.4",
     "@tanstack/react-query": "^5.60.5",
     "@tanstack/react-router": "^1.81.14",
     "ky": "^1.7.2",

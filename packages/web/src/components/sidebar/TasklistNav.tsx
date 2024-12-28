@@ -39,7 +39,7 @@ const fetchTasklist = async () => {
   const response = await ky('http://localhost:3000/tasklist', {
     credentials: 'include',
   });
-  console.log(response);
+
   return response.json();
 };
 
@@ -51,6 +51,16 @@ const postTaskList = async (title: string) => {
     })
     .json();
 
+  return response;
+};
+
+const editTaskList = async (id, title: string) => {
+  const response = await ky
+    .patch(`http://localhost:3000/tasklist/${id}`, {
+      credentials: 'include',
+      json: { title: title },
+    })
+    .json();
   return response;
 };
 
@@ -67,7 +77,10 @@ const deleteTasklist = async (id: number) => {
 const TaskListNav = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [currentTaskListId, setCurrentTaskListId] = useState(1);
+
   const { data, refetch } = useQuery({
     queryKey: ['tasklist'],
     queryFn: fetchTasklist,
@@ -78,16 +91,17 @@ const TaskListNav = () => {
   const { register, handleSubmit } = useForm({
     defaultValues: {
       tasklistName: '',
+      newTasklistName: '',
     },
   });
 
   const onSubmit = handleSubmit((data) => {
     postTaskList(data.tasklistName);
-
     setIsDialogOpen(false);
     refetch();
   });
-  const onClickDelete = (id) => {
+
+  const onClickDelete = (id: number) => {
     deleteTasklist(id);
     setIsDeleteOpen(false);
     refetch();
@@ -95,9 +109,7 @@ const TaskListNav = () => {
   return (
     <Collapsible.Root
       onOpenChange={(open) => {
-        console.log(open);
         setIsOpen(open.open);
-        console.log(data);
       }}
     >
       <Collapsible.Trigger paddingY="3">
@@ -151,7 +163,48 @@ const TaskListNav = () => {
                     <FaEllipsis />
                   </MenuTrigger>
                   <MenuContent>
-                    <MenuItem value="edit">Edit</MenuItem>
+                    <MenuItem value="edit">
+                      <DialogRoot open={isEditOpen} placement="center">
+                        <DialogTrigger asChild>
+                          <Text
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              setCurrentTaskListId(list.id);
+                              setIsEditOpen(true);
+                            }}
+                          >
+                            Edit
+                          </Text>
+                        </DialogTrigger>
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>Edit a tasklist</DialogTitle>
+                          </DialogHeader>
+                          <DialogBody pb="8">
+                            <form
+                              onSubmit={handleSubmit((data) => {
+                                console.log();
+                                editTaskList(
+                                  currentTaskListId,
+                                  data.newTasklistName,
+                                );
+                                setIsEditOpen(false);
+                                refetch();
+                              })}
+                            >
+                              <Stack gap="4" align="flex-start" maxW="sm">
+                                <Field label="New tasklist Name">
+                                  <Input {...register('newTasklistName')} />
+                                </Field>
+
+                                <Button type="submit">Confirm </Button>
+                              </Stack>
+                            </form>
+                          </DialogBody>
+                          <DialogCloseTrigger />
+                        </DialogContent>
+                      </DialogRoot>
+                    </MenuItem>
 
                     <MenuItem
                       value="delete"
