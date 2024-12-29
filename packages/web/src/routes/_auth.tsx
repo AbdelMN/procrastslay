@@ -5,10 +5,10 @@ import {
   redirect,
   useRouter,
 } from '@tanstack/react-router';
-
+import { Box } from '@chakra-ui/react';
 import { useAuth } from '../auth';
 import { Flex } from '@chakra-ui/react';
-import Sidebar from '../components/sidebar/sidebar';
+import Sidebar from '../components/sidebar/Sidebar';
 
 export const Route = createFileRoute('/_auth')({
   beforeLoad: ({ context, location }) => {
@@ -42,7 +42,9 @@ function AuthLayout() {
   return (
     <Flex>
       <Sidebar />
-      <Outlet />
+      <Box width={'100%'}>
+        <Outlet />
+      </Box>
     </Flex>
   );
 }

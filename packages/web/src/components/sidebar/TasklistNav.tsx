@@ -3,6 +3,8 @@ import { FaChevronRight, FaChevronDown, FaEllipsis } from 'react-icons/fa6';
 import { useState } from 'react';
 import ky from 'ky';
 import { useQuery } from '@tanstack/react-query';
+import { useNavigate, useMatchRoute } from '@tanstack/react-router';
+
 import {
   MenuContent,
   MenuItem,
@@ -23,8 +25,10 @@ const fetchTasklist = async () => {
 };
 
 const TaskListNav = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const matchRoute = useMatchRoute();
 
+  const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate({ from: '/' });
   const { data, refetch } = useQuery({
     queryKey: ['tasklist'],
     queryFn: fetchTasklist,
@@ -49,8 +53,23 @@ const TaskListNav = () => {
         <Flex direction={'column'}>
           {data &&
             data.map((list) => (
-              <Button justifyContent={'space-between'} key={list.id}>
-                {list.title}{' '}
+              <Button
+                bgColor={
+                  matchRoute({ to: `/tasklist/${list.id}` })
+                    ? 'gray.700'
+                    : 'transparent'
+                }
+                onClick={() =>
+                  navigate({
+                    to: `/tasklist/${list.id}`,
+                  })
+                }
+                justifyContent={'space-between'}
+                key={list.id}
+              >
+                <Box overflow="hidden" textOverflow="ellipsis">
+                  {list.title}
+                </Box>
                 <MenuRoot>
                   <MenuTrigger asChild>
                     <FaEllipsis />
