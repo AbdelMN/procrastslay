@@ -1,5 +1,6 @@
-import { Box, Table } from '@chakra-ui/react';
+import { Box, Flex, Table } from '@chakra-ui/react';
 import Task from './Task';
+import AddTask from './AddTask';
 type TaskListProps = {
   id: number;
 };
@@ -12,10 +13,13 @@ const tasks = [
 ];
 const TaskList = ({ id }: TaskListProps) => {
   return (
-    <Box width={'500px'}>
-      {tasks.map((task) => {
-        return <Task task={task} />;
-      })}
+    <Box>
+      <AddTask taskListId={id} />
+      <Box width={'500px'}>
+        {tasks.map((task) => {
+          return <Task task={task} />;
+        })}
+      </Box>
     </Box>
   );
 };
