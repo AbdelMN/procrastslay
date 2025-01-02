@@ -48,7 +48,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   if (isError) {
-    console.error('Erreur de chargement des données :', error);
+    console.error('Erreu0r0- de chargement des données :', error);
     return <div>Erreur : Impossible de récupérer les données</div>;
   }
 

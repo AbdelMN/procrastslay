@@ -13,10 +13,12 @@ import {
   SelectTrigger,
   SelectValueText,
 } from '@/components/ui/select';
+import { DatePicker } from '@ark-ui/react/date-picker';
 import ky from 'ky';
 import { useForm } from '@tanstack/react-form';
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
+
 const fetchTasklist = async () => {
   const response = await ky('http://localhost:3000/tasklist', {
     credentials: 'include',
@@ -25,6 +27,24 @@ const fetchTasklist = async () => {
   return response.json();
 };
 
+const postTask = async ({
+  title,
+  difficulty,
+  tasklistId,
+}: {
+  title: string;
+  difficulty: number;
+  tasklistId: number;
+}) => {
+  const response = await ky
+    .post('http://localhost:3000/task', {
+      credentials: 'include',
+      json: { title: title, difficulty: difficulty, tasklistId: tasklistId },
+    })
+    .json();
+  console.log(response);
+  return response;
+};
 const AddTask = ({ taskListId }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { data, refetch } = useQuery({
@@ -33,8 +53,9 @@ const AddTask = ({ taskListId }) => {
     enabled: true,
     retry: false,
   });
-  console.log(data);
-
+  const addTask = useMutation({
+    mutationFn: postTask,
+  });
   const tasklist = data
     ? createListCollection({
         items: data.map((item) => ({
@@ -49,8 +70,7 @@ const AddTask = ({ taskListId }) => {
       { label: 'Easy', value: '1' },
       { label: 'Hard', value: '2' },
       {
-        label:
-          'Mega HardHardHardHardHardHardHardHardHardHardHardHardHardHardHardHardHardHardHardHardHardHardHardHardHardHardHardHardHardHardHardHardHardHardHardHard',
+        label: 'Mega Hard',
         value: '3',
       },
     ],
@@ -60,9 +80,14 @@ const AddTask = ({ taskListId }) => {
       title: '',
       tasklist: [''],
       difficulty: [''],
+      duedate: '',
     },
     onSubmit: async ({ value }) => {
-      console.log(value);
+      addTask.mutate({
+        title: value.title,
+        difficulty: +value.difficulty[0],
+        tasklistId: +value.tasklist[0],
+      });
     },
   });
 
@@ -91,49 +116,12 @@ const AddTask = ({ taskListId }) => {
             );
           }}
         />
-
-        <form.Field
-          name="tasklist"
-          children={(field) => {
-            return (
-              <>
-                <SelectRoot
-                  itemToValue={(item) => {
-                    console.log('t');
-                  }}
-                  name={field.name}
-                  value={field.state.value}
-                  onValueChange={({ value }) => {
-                    field.handleChange(value);
-                  }}
-                  collection={tasklist}
-                >
-                  <SelectTrigger>
-                    <SelectValueText placeholder="Select movie" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {tasklist.items.map((movie) => (
-                      <SelectItem item={movie} key={movie.value}>
-                        {movie.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </SelectRoot>
-              </>
-            );
-          }}
-        />
-        <Flex
-          direction={'row'}
-          justifyContent={'space-between'}
-          alignItems="center"
-          gap={1}
-        >
+        <Flex direction={'row'} alignItems="center" gap={1}>
           <form.Field
             name="difficulty"
             children={(field) => {
               return (
-                <Box width={'100%'}>
+                <Box>
                   <SelectRoot
                     name={field.name}
                     value={field.state.value}
@@ -141,8 +129,9 @@ const AddTask = ({ taskListId }) => {
                       field.handleChange(value);
                     }}
                     collection={difficulty}
+                    width="100px"
                   >
-                    <SelectTrigger width="100%">
+                    <SelectTrigger>
                       <SelectValueText placeholder="Select difficulty" />
                     </SelectTrigger>
                     <SelectContent>
@@ -157,9 +146,66 @@ const AddTask = ({ taskListId }) => {
               );
             }}
           />
-
+          <form.Field
+            name="duedate"
+            children={(field) => {
+              return (
+                <Box>
+                  <Input
+                    width={'150px'}
+                    id={field.name}
+                    name={field.name}
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                  />
+                </Box>
+              );
+            }}
+          />
+        </Flex>
+        <Flex
+          direction={'row'}
+          justifyContent={'space-between'}
+          alignItems="center"
+          gap={1}
+        >
+          <form.Field
+            name="tasklist"
+            children={(field) => {
+              return (
+                <>
+                  <SelectRoot
+                    name={field.name}
+                    value={field.state.value}
+                    onValueChange={({ value }) => {
+                      field.handleChange(value);
+                    }}
+                    collection={tasklist}
+                  >
+                    <SelectTrigger>
+                      <SelectValueText placeholder="Select tasklist" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {tasklist.items.map((tasklist) => (
+                        <SelectItem item={tasklist} key={tasklist.value}>
+                          {tasklist.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </SelectRoot>
+                </>
+              );
+            }}
+          />
           <Flex direction={'row'} gap={1}>
-            <Button>Cancel</Button>
+            <Button
+              onClick={() => {
+                setIsOpen(false);
+              }}
+            >
+              Cancel
+            </Button>
             <Button type="submit">Confirm</Button>
           </Flex>
         </Flex>
