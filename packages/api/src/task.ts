@@ -27,7 +27,7 @@ app.post('/', async (c) => {
     if (user.user) {
       const title = body.title;
       const difficulty: number = body.difficulty;
-
+      const tasklistId = body.tasklistId;
       const userId = user.user.id;
 
       const tasklist = await prisma.task.create({
@@ -35,6 +35,7 @@ app.post('/', async (c) => {
           title,
           difficulty,
           userId,
+          tasklistId,
         },
       });
       return c.json(tasklist);

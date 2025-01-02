@@ -85,4 +85,28 @@ app.patch('/:id', async (c) => {
     }
   }
 });
+
+app.get('/:id/tasks', async (c) => {
+  const { id } = c.req.param();
+  const session = getCookie(c, 'session');
+  if (session) {
+    const tasklistId = +id;
+    const user = await validateSessionToken(session);
+    if (user.user) {
+      const userId = user.user.id;
+      const result = await prisma.task.findMany({
+        orderBy: [
+          {
+            id: 'asc',
+          },
+        ],
+        where: {
+          userId: user.user.id,
+          tasklistId: tasklistId,
+        },
+      });
+      return c.json(result);
+    }
+  }
+});
 export default app;
