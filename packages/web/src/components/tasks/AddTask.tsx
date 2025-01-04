@@ -17,7 +17,7 @@ import { DatePicker } from '@ark-ui/react/date-picker';
 import ky from 'ky';
 import { useForm } from '@tanstack/react-form';
 import { useState } from 'react';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 const fetchTasklist = async () => {
   const response = await ky('http://localhost:3000/tasklist', {
@@ -45,17 +45,27 @@ const postTask = async ({
   console.log(response);
   return response;
 };
+const useAddTask = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: postTask,
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ['tasks', variables.tasklistId],
+      });
+    },
+  });
+};
 const AddTask = ({ taskListId }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const addTask = useAddTask();
   const { data, refetch } = useQuery({
     queryKey: ['tasklist'],
     queryFn: fetchTasklist,
     enabled: true,
     retry: false,
   });
-  const addTask = useMutation({
-    mutationFn: postTask,
-  });
+
   const tasklist = data
     ? createListCollection({
         items: data.map((item) => ({
@@ -78,11 +88,12 @@ const AddTask = ({ taskListId }) => {
   const form = useForm({
     defaultValues: {
       title: '',
-      tasklist: [''],
+      tasklist: [taskListId.toString()],
       difficulty: [''],
       duedate: '',
     },
     onSubmit: async ({ value }) => {
+      console.log(value);
       addTask.mutate({
         title: value.title,
         difficulty: +value.difficulty[0],
@@ -183,7 +194,7 @@ const AddTask = ({ taskListId }) => {
                     }}
                     collection={tasklist}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger clearable>
                       <SelectValueText placeholder="Select tasklist" />
                     </SelectTrigger>
                     <SelectContent>
