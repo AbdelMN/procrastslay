@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValueText,
 } from '@/components/ui/select';
-import { DatePicker } from '@ark-ui/react/date-picker';
+
 import ky from 'ky';
 import { useForm } from '@tanstack/react-form';
 import { useState } from 'react';
@@ -59,7 +59,7 @@ const useAddTask = () => {
 const AddTask = ({ taskListId }) => {
   const [isOpen, setIsOpen] = useState(false);
   const addTask = useAddTask();
-  const { data, refetch } = useQuery({
+  const { data } = useQuery({
     queryKey: ['tasklist'],
     queryFn: fetchTasklist,
     enabled: true,
