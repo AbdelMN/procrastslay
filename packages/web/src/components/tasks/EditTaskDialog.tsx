@@ -4,6 +4,7 @@ import {
   Flex,
   Button,
   createListCollection,
+  Spinner,
 } from '@chakra-ui/react';
 import {
   DialogBody,
@@ -25,14 +26,7 @@ import ky from 'ky';
 import { useForm } from '@tanstack/react-form';
 import { useQueryClient, useMutation, useQuery } from '@tanstack/react-query';
 import { useRef, useState } from 'react';
-
-const fetchTasklist = async () => {
-  const response = await ky('http://localhost:3000/tasklist', {
-    credentials: 'include',
-  });
-
-  return response.json();
-};
+import { Task, tasklistQuery } from '@/queries/task';
 
 const patchTask = async ({
   id,
@@ -54,7 +48,7 @@ const patchTask = async ({
   return response;
 };
 
-const useEditTask = (taskListId) => {
+const useEditTask = (taskListId: number) => {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -70,26 +64,12 @@ const useEditTask = (taskListId) => {
   });
 };
 
-const EditTask = ({ task }) => {
+const EditTask = ({ task }: { task: Task }) => {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const editTask = useEditTask(task.tasklistId);
 
-  const { data } = useQuery({
-    queryKey: ['tasklist'],
-    queryFn: fetchTasklist,
-    enabled: true,
-    retry: false,
-  });
-
-  const tasklist = data
-    ? createListCollection({
-        items: data.map((item) => ({
-          label: item.title,
-          value: item.id.toString(),
-        })),
-      })
-    : null;
+  const { data, isPending, isError } = useQuery(tasklistQuery);
 
   const difficulty = createListCollection({
     items: [
@@ -106,7 +86,7 @@ const EditTask = ({ task }) => {
     defaultValues: {
       title: task.title,
       tasklist: [task.tasklistId.toString()],
-      difficulty: [task.difficulty],
+      difficulty: [task.difficulty.toString()],
       duedate: '',
     },
     onSubmit: async ({ value }) => {
@@ -118,6 +98,14 @@ const EditTask = ({ task }) => {
         taskListId: +value.tasklist[0],
       });
     },
+  });
+  if (isPending || isError) return <Spinner />;
+
+  const tasklist = createListCollection({
+    items: data.map((item) => ({
+      label: item.title,
+      value: item.id.toString(),
+    })),
   });
 
   return (

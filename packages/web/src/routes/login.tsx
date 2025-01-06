@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { createFileRoute, redirect } from '@tanstack/react-router';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';

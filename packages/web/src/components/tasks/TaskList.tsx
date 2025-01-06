@@ -1,38 +1,25 @@
-import { Box } from '@chakra-ui/react';
+import { Box, Spinner } from '@chakra-ui/react';
 import Task from './Task';
 import AddTask from './AddTask';
 import { useQuery } from '@tanstack/react-query';
-import ky from 'ky';
+import { getTasksQuery } from '@/queries/task';
+
 type TaskListProps = {
   id: number;
 };
 
-const fetchTasks = async (tasklistId) => {
-  const response = await ky(
-    `http://localhost:3000/tasklist/${tasklistId}/tasks`,
-    {
-      credentials: 'include',
-    },
-  );
-
-  return response.json();
-};
 const TaskList = ({ id }: TaskListProps) => {
-  const { data } = useQuery({
-    queryKey: ['tasks', id],
-    queryFn: () => fetchTasks(id),
-    enabled: true,
-    retry: false,
-  });
+  const { data, isPending, isError } = useQuery(getTasksQuery(id));
+
+  if (isPending || isError) return <Spinner />;
 
   return (
     <Box>
       <AddTask key={id} taskListId={id} />
       <Box width={'500px'}>
-        {data &&
-          data.map((task) => {
-            return <Task task={task} key={task.id} />;
-          })}
+        {data.map((task) => {
+          return <Task task={task} key={task.id} />;
+        })}
       </Box>
     </Box>
   );

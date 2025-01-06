@@ -1,13 +1,5 @@
-import {
-  Link,
-  Outlet,
-  createFileRoute,
-  redirect,
-  useRouter,
-} from '@tanstack/react-router';
-import { Box } from '@chakra-ui/react';
-import { useAuth } from '../auth';
-import { Flex } from '@chakra-ui/react';
+import { Outlet, createFileRoute, redirect } from '@tanstack/react-router';
+import { Box, Flex } from '@chakra-ui/react';
 import Sidebar from '../components/sidebar/Sidebar';
 
 export const Route = createFileRoute('/_auth')({
@@ -25,19 +17,19 @@ export const Route = createFileRoute('/_auth')({
 });
 
 function AuthLayout() {
-  const router = useRouter();
-  const navigate = Route.useNavigate();
-  const auth = useAuth();
+  // const router = useRouter();
+  // const navigate = Route.useNavigate();
+  // const auth = useAuth();
 
-  const handleLogout = () => {
-    if (window.confirm('Are you sure you want to logout?')) {
-      auth.logout().then(() => {
-        router.invalidate().finally(() => {
-          navigate({ to: '/' });
-        });
-      });
-    }
-  };
+  // const handleLogout = () => {
+  //   if (window.confirm('Are you sure you want to logout?')) {
+  //     auth.logout().then(() => {
+  //       router.invalidate().finally(() => {
+  //         navigate({ to: '/' });
+  //       });
+  //     });
+  //   }
+  // };
 
   return (
     <Flex>

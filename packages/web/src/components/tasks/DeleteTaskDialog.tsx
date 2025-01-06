@@ -12,8 +12,9 @@ import {
 } from '@/components/ui/dialog';
 
 import { useQueryClient, useMutation } from '@tanstack/react-query';
+import { Task } from '@/queries/task';
 
-const postDeleteTask = async (task) => {
+const postDeleteTask = async (task: Task) => {
   const response = await ky
     .post('http://localhost:3000/task/delete', {
       credentials: 'include',
@@ -36,7 +37,7 @@ const useDeleteTask = () => {
   });
 };
 
-const DeleteTask = ({ task }) => {
+const DeleteTask = ({ task }: { task: Task }) => {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const deleteTask = useDeleteTask();
   const onClickDelete = async () => {
