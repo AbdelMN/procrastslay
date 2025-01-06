@@ -8,6 +8,8 @@ import {
   MenuTrigger,
 } from '@/components/ui/menu';
 import DeleteTask from './DeleteTaskDialog';
+import EditTask from './EditTaskDialog';
+
 const Task = ({ task }) => {
   return (
     <Flex
@@ -24,7 +26,9 @@ const Task = ({ task }) => {
           <FaEllipsis />
         </MenuTrigger>
         <MenuContent>
-          <MenuItem value="edit">edit</MenuItem>
+          <MenuItem value="edit">
+            <EditTask task={task} />
+          </MenuItem>
 
           <MenuItem
             value="delete"
