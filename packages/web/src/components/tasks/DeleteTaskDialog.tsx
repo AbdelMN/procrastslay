@@ -39,7 +39,7 @@ const useDeleteTask = () => {
 const DeleteTask = ({ task }) => {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const deleteTask = useDeleteTask();
-  const onClickDelete = async (id: number) => {
+  const onClickDelete = async () => {
     deleteTask.mutate(task);
 
     setIsDeleteOpen(false);
@@ -69,7 +69,7 @@ const DeleteTask = ({ task }) => {
         <DialogFooter>
           <Button
             onClick={() => {
-              onClickDelete(task);
+              onClickDelete();
             }}
           >
             Delete

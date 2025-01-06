@@ -15,7 +15,7 @@ import {
 import EditTaskList from './EditTaskListDialog';
 import DeleteTaskList from './DeleteTaskListDialog';
 import AddTaskList from './AddTaskList';
-type Task = {};
+
 const fetchTasklist = async () => {
   const response = await ky('http://localhost:3000/tasklist', {
     credentials: 'include',

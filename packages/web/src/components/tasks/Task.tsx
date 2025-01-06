@@ -9,8 +9,9 @@ import {
 } from '@/components/ui/menu';
 import DeleteTask from './DeleteTaskDialog';
 import EditTask from './EditTaskDialog';
+import { type Task } from '@/queries/task';
 
-const Task = ({ task }) => {
+const Task = ({ task }: { task: Task }) => {
   return (
     <Flex
       justifyContent={'space-between'}
