@@ -10,7 +10,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+
 import { useQueryClient, useMutation } from '@tanstack/react-query';
+
 const postDeleteTask = async (task) => {
   const response = await ky
     .post('http://localhost:3000/task/delete', {
@@ -21,6 +23,7 @@ const postDeleteTask = async (task) => {
 
   return response;
 };
+
 const useDeleteTask = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -32,6 +35,7 @@ const useDeleteTask = () => {
     },
   });
 };
+
 const DeleteTask = ({ task }) => {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const deleteTask = useDeleteTask();
