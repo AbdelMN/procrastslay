@@ -10,8 +10,10 @@ import {
 import DeleteTask from './DeleteTaskDialog';
 import EditTask from './EditTaskDialog';
 import { type Task } from '@/queries/task';
+import { useEditTask } from '@/queries/hooks/task';
 
 const Task = ({ task }: { task: Task }) => {
+  const editTask = useEditTask(task.tasklistId);
   return (
     <Flex
       justifyContent={'space-between'}
@@ -19,7 +21,18 @@ const Task = ({ task }: { task: Task }) => {
       borderRadius="md"
     >
       <Box>
-        <Checkbox />
+        <Checkbox
+          defaultChecked={task.completed}
+          onCheckedChange={({ checked }) => {
+            editTask.mutate({
+              id: task.id,
+              title: task.title,
+              difficulty: task.difficulty,
+              taskListId: task.tasklistId,
+              completed: Boolean(checked),
+            });
+          }}
+        />
         {task.title}
       </Box>
       <MenuRoot>
