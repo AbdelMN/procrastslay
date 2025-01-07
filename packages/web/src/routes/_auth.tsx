@@ -1,6 +1,6 @@
 import { Outlet, createFileRoute, redirect } from '@tanstack/react-router';
 import { Box, Flex } from '@chakra-ui/react';
-import Sidebar from '../components/sidebar/Sidebar';
+import Sidebar from '@/components/sidebar/Sidebar';
 
 export const Route = createFileRoute('/_auth')({
   beforeLoad: ({ context, location }) => {

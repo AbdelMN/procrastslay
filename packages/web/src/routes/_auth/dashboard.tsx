@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-import { useAuth } from '../auth';
+import { useAuth } from '../../auth';
 
 import { Box } from '@chakra-ui/react';
 export const Route = createFileRoute('/_auth/dashboard')({
