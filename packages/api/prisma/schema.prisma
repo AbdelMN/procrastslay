@@ -14,7 +14,7 @@ datasource db {
 }
 
 model User {
-  id                Int        @id @default(autoincrement())
+  id                String     @id @default(uuid())
   notionId          String?    @unique
   notionUsername    String?
   notionAccessToken String?
@@ -26,45 +26,45 @@ model User {
 
 model Session {
   id        String   @id
-  userId    Int
+  userId    String
   expiresAt DateTime
 
   user User @relation(references: [id], fields: [userId], onDelete: Cascade)
 }
 
 model Tasklist {
-  id     Int    @id @default(autoincrement())
+  id     String @id @default(uuid())
   title  String
   tasks  Task[]
-  userId Int
+  userId String
   user   User   @relation(references: [id], fields: [userId], onDelete: Cascade)
 }
 
 model Task {
-  id          Int       @id @default(autoincrement())
+  id          String    @id @default(uuid())
   title       String
   description String?
   difficulty  Int
   dueDate     DateTime?
   completed   Boolean   @default(false)
-  tasklistId  Int?
+  tasklistId  String?
   tasklist    Tasklist? @relation(fields: [tasklistId], references: [id])
   subtasks    Subtask[]
-  userId      Int
+  userId      String
   user        User      @relation(references: [id], fields: [userId], onDelete: Cascade)
 }
 
 model Subtask {
-  id           Int     @id @default(autoincrement())
+  id           String  @id @default(uuid())
   title        String
   completed    Boolean @default(false)
-  parentTaskId Int
+  parentTaskId String
   parentTask   Task    @relation(references: [id], fields: [parentTaskId], onDelete: Cascade)
 }
 
 model Habit {
-  id             Int      @id @default(autoincrement())
-  userId         Int
+  id             String   @id @default(uuid())
+  userId         String
   name           String
   frequencyType  String
   frequencyValue Int?

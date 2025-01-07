@@ -74,7 +74,7 @@ app.patch('/:id', async (c) => {
       const userId = user.user.id;
       const editedTaskList = await prisma.tasklist.update({
         where: {
-          id: +id,
+          id: id,
           userId: user.user.id,
         },
         data: {
@@ -90,7 +90,7 @@ app.get('/:id/tasks', async (c) => {
   const { id } = c.req.param();
   const session = getCookie(c, 'session');
   if (session) {
-    const tasklistId = +id;
+    const tasklistId = id;
     const user = await validateSessionToken(session);
     if (user.user) {
       const userId = user.user.id;

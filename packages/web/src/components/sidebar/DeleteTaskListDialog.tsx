@@ -11,7 +11,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 
-const deleteTasklist = async (id: number) => {
+const deleteTasklist = async (id: string) => {
   const response = await ky
     .post('http://localhost:3000/tasklist/delete', {
       credentials: 'include',
@@ -26,11 +26,11 @@ const DeleteTaskList = ({
   taskListId,
   refetch,
 }: {
-  taskListId: number;
+  taskListId: string;
   refetch: () => void;
 }) => {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-  const onClickDelete = async (id: number) => {
+  const onClickDelete = async (id: string) => {
     await deleteTasklist(id);
 
     refetch();

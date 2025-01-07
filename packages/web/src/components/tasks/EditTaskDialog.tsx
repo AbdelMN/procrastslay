@@ -60,7 +60,7 @@ const EditTask = ({ task }: { task: Task }) => {
         id: task.id,
         title: value.title,
         difficulty: +value.difficulty[0],
-        taskListId: +value.tasklist[0],
+        taskListId: value.tasklist[0],
         completed: task.completed,
       });
     },

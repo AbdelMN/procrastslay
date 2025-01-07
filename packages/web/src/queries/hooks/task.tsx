@@ -8,10 +8,10 @@ const patchTask = async ({
   taskListId,
   completed,
 }: {
-  id: number;
+  id: string;
   title: string;
   difficulty: number;
-  taskListId: number;
+  taskListId: string;
   completed: boolean;
 }) => {
   const response = await ky
@@ -28,7 +28,7 @@ const patchTask = async ({
   return response;
 };
 
-export const useEditTask = (taskListId: number) => {
+export const useEditTask = (taskListId: string) => {
   const queryClient = useQueryClient();
 
   return useMutation({

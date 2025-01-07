@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/dialog';
 import { Field } from '@/components/ui/field';
 
-const editTaskList = async (id: number, title: string) => {
+const editTaskList = async (id: string, title: string) => {
   const response = await ky
     .patch(`http://localhost:3000/tasklist/${id}`, {
       credentials: 'include',
@@ -28,7 +28,7 @@ const EditTaskList = ({
   taskListId,
   refetch,
 }: {
-  taskListId: number;
+  taskListId: string;
   refetch: () => void;
 }) => {
   const [isEditOpen, setIsEditOpen] = useState(false);

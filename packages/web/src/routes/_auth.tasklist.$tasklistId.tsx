@@ -9,7 +9,7 @@ function RouteComponent() {
   const { tasklistId } = Route.useParams();
   return (
     <Center>
-      <TaskList id={+tasklistId} />
+      <TaskList id={tasklistId} />
     </Center>
   );
 }

@@ -77,7 +77,7 @@ app.patch('/:id', async (c) => {
       const userId = user.user.id;
       const editedTaskList = await prisma.task.update({
         where: {
-          id: +id,
+          id: id,
           userId: user.user.id,
         },
         data: {

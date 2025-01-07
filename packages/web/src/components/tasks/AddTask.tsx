@@ -17,7 +17,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { postTask, tasklistQuery } from '@/queries/task';
 
-const AddTask = ({ taskListId }: { taskListId: number }) => {
+const AddTask = ({ taskListId }: { taskListId: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   const queryClient = useQueryClient();
   const { data, isPending, isError } = useQuery(tasklistQuery);
@@ -33,7 +33,7 @@ const AddTask = ({ taskListId }: { taskListId: number }) => {
   const form = useForm({
     defaultValues: {
       title: '',
-      tasklist: [taskListId.toString()],
+      tasklist: [taskListId],
       difficulty: [''],
       duedate: '',
     },
@@ -42,7 +42,7 @@ const AddTask = ({ taskListId }: { taskListId: number }) => {
       addTask.mutate({
         title: value.title,
         difficulty: +value.difficulty[0],
-        tasklistId: +value.tasklist[0],
+        tasklistId: value.tasklist[0],
       });
     },
   });

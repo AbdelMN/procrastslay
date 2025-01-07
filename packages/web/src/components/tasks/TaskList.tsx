@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getTasksQuery } from '@/queries/task';
 
 type TaskListProps = {
-  id: number;
+  id: string;
 };
 
 const TaskList = ({ id }: TaskListProps) => {

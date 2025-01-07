@@ -2,7 +2,7 @@ import { queryOptions } from '@tanstack/react-query';
 import ky from 'ky';
 
 export type Tasklist = {
-  id: number;
+  id: string;
   title: string;
   userId: number;
 };
@@ -10,14 +10,14 @@ export type Tasklist = {
 export type TaskToCreate = {
   title: string;
   difficulty: number;
-  tasklistId: number;
+  tasklistId: string;
 };
 
 export type Task = {
-  id: number;
+  id: string;
   title: string;
   difficulty: number;
-  tasklistId: number;
+  tasklistId: string;
   completed: boolean;
 };
 
@@ -26,7 +26,7 @@ const fetchTasklist = async () =>
     credentials: 'include',
   }).json() as unknown as Tasklist[];
 
-const fetchTasks = async (tasklistId: number) =>
+const fetchTasks = async (tasklistId: string) =>
   ky(`http://localhost:3000/tasklist/${tasklistId}/tasks`, {
     credentials: 'include',
   }).json() as unknown as Task[];
@@ -48,7 +48,7 @@ export const tasklistQuery = queryOptions({
   queryFn: fetchTasklist,
 });
 
-export const getTasksQuery = (id: number) =>
+export const getTasksQuery = (id: string) =>
   queryOptions({
     queryKey: ['tasks', id],
     queryFn: () => fetchTasks(id),
