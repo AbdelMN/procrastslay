@@ -38,11 +38,11 @@ const EditTask = ({ task }: { task: Task }) => {
 
   const difficulty = createListCollection({
     items: [
-      { label: 'Easy', value: '1' },
-      { label: 'Hard', value: '2' },
+      { label: 'Easy', value: 1 },
+      { label: 'Hard', value: 2 },
       {
         label: 'Mega Hard',
-        value: '3',
+        value: 3,
       },
     ],
   });
@@ -51,7 +51,7 @@ const EditTask = ({ task }: { task: Task }) => {
     defaultValues: {
       title: task.title,
       tasklist: [task.tasklistId.toString()],
-      difficulty: [task.difficulty.toString()],
+      difficulty: [task.difficulty],
       duedate: '',
     },
     onSubmit: async ({ value }) => {
@@ -59,7 +59,7 @@ const EditTask = ({ task }: { task: Task }) => {
       editTask.mutate({
         id: task.id,
         title: value.title,
-        difficulty: +value.difficulty[0],
+        difficulty: value.difficulty[0],
         taskListId: value.tasklist[0],
         completed: task.completed,
       });
