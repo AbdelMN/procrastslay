@@ -22,47 +22,12 @@ import {
   SelectTrigger,
   SelectValueText,
 } from '@/components/ui/select';
-import ky from 'ky';
+
 import { useForm } from '@tanstack/react-form';
-import { useQueryClient, useMutation, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useRef, useState } from 'react';
 import { Task, tasklistQuery } from '@/queries/task';
-
-const patchTask = async ({
-  id,
-  title,
-  difficulty,
-  taskListId,
-}: {
-  id: number;
-  title: string;
-  difficulty: number;
-  taskListId: number;
-}) => {
-  const response = await ky
-    .patch(`http://localhost:3000/task/${id}`, {
-      credentials: 'include',
-      json: { title: title, difficulty: difficulty, tasklistId: taskListId },
-    })
-    .json();
-  return response;
-};
-
-const useEditTask = (taskListId: number) => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: patchTask,
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: ['tasks', variables.taskListId],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ['tasks', taskListId],
-      });
-    },
-  });
-};
+import { useEditTask } from '@/queries/hooks/task';
 
 const EditTask = ({ task }: { task: Task }) => {
   const [isEditOpen, setIsEditOpen] = useState(false);
@@ -96,6 +61,7 @@ const EditTask = ({ task }: { task: Task }) => {
         title: value.title,
         difficulty: +value.difficulty[0],
         taskListId: +value.tasklist[0],
+        completed: task.completed,
       });
     },
   });

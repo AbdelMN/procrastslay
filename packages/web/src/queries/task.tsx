@@ -18,6 +18,7 @@ export type Task = {
   title: string;
   difficulty: number;
   tasklistId: number;
+  completed: boolean;
 };
 
 const fetchTasklist = async () =>
