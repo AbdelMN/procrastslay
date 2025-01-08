@@ -41,7 +41,7 @@ const AddTask = ({ taskListId }: { taskListId: string }) => {
       console.log(value);
       addTask.mutate({
         title: value.title,
-        difficulty: +value.difficulty[0],
+        difficulty: value.difficulty[0],
         tasklistId: value.tasklist[0],
       });
     },

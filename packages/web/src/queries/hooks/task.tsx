@@ -10,7 +10,7 @@ const patchTask = async ({
 }: {
   id: string;
   title: string;
-  difficulty: number;
+  difficulty: string;
   taskListId: string;
   completed: boolean;
 }) => {

@@ -38,11 +38,11 @@ const EditTask = ({ task }: { task: Task }) => {
 
   const difficulty = createListCollection({
     items: [
-      { label: 'Easy', value: 1 },
-      { label: 'Hard', value: 2 },
+      { label: 'Easy', value: '1' },
+      { label: 'Hard', value: '2' },
       {
         label: 'Mega Hard',
-        value: 3,
+        value: '3',
       },
     ],
   });

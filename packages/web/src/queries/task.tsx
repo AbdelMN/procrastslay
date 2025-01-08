@@ -9,14 +9,14 @@ export type Tasklist = {
 
 export type TaskToCreate = {
   title: string;
-  difficulty: number;
+  difficulty: string;
   tasklistId: string;
 };
 
 export type Task = {
   id: string;
   title: string;
-  difficulty: number;
+  difficulty: string;
   tasklistId: string;
   completed: boolean;
 };
