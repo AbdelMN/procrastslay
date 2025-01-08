@@ -17,6 +17,7 @@ import { Route as IndexImport } from './routes/index'
 import { Route as AuthDashboardImport } from './routes/_auth/dashboard'
 import { Route as AuthTasklistTasklistIdImport } from './routes/_auth/tasklist/$tasklistId'
 import { Route as AuthTasklistTasklistIdTaskNewImport } from './routes/_auth/tasklist/$tasklistId.task/new'
+import { Route as AuthTasklistTasklistIdTaskTaskIdEditImport } from './routes/_auth/tasklist/$tasklistId.task/$taskId.edit'
 
 // Create/Update Routes
 
@@ -53,6 +54,13 @@ const AuthTasklistTasklistIdTaskNewRoute =
   AuthTasklistTasklistIdTaskNewImport.update({
     id: '/task/new',
     path: '/task/new',
+    getParentRoute: () => AuthTasklistTasklistIdRoute,
+  } as any)
+
+const AuthTasklistTasklistIdTaskTaskIdEditRoute =
+  AuthTasklistTasklistIdTaskTaskIdEditImport.update({
+    id: '/task/$taskId/edit',
+    path: '/task/$taskId/edit',
     getParentRoute: () => AuthTasklistTasklistIdRoute,
   } as any)
 
@@ -102,6 +110,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthTasklistTasklistIdTaskNewImport
       parentRoute: typeof AuthTasklistTasklistIdImport
     }
+    '/_auth/tasklist/$tasklistId/task/$taskId/edit': {
+      id: '/_auth/tasklist/$tasklistId/task/$taskId/edit'
+      path: '/task/$taskId/edit'
+      fullPath: '/tasklist/$tasklistId/task/$taskId/edit'
+      preLoaderRoute: typeof AuthTasklistTasklistIdTaskTaskIdEditImport
+      parentRoute: typeof AuthTasklistTasklistIdImport
+    }
   }
 }
 
@@ -109,11 +124,14 @@ declare module '@tanstack/react-router' {
 
 interface AuthTasklistTasklistIdRouteChildren {
   AuthTasklistTasklistIdTaskNewRoute: typeof AuthTasklistTasklistIdTaskNewRoute
+  AuthTasklistTasklistIdTaskTaskIdEditRoute: typeof AuthTasklistTasklistIdTaskTaskIdEditRoute
 }
 
 const AuthTasklistTasklistIdRouteChildren: AuthTasklistTasklistIdRouteChildren =
   {
     AuthTasklistTasklistIdTaskNewRoute: AuthTasklistTasklistIdTaskNewRoute,
+    AuthTasklistTasklistIdTaskTaskIdEditRoute:
+      AuthTasklistTasklistIdTaskTaskIdEditRoute,
   }
 
 const AuthTasklistTasklistIdRouteWithChildren =
@@ -140,6 +158,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthDashboardRoute
   '/tasklist/$tasklistId': typeof AuthTasklistTasklistIdRouteWithChildren
   '/tasklist/$tasklistId/task/new': typeof AuthTasklistTasklistIdTaskNewRoute
+  '/tasklist/$tasklistId/task/$taskId/edit': typeof AuthTasklistTasklistIdTaskTaskIdEditRoute
 }
 
 export interface FileRoutesByTo {
@@ -149,6 +168,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthDashboardRoute
   '/tasklist/$tasklistId': typeof AuthTasklistTasklistIdRouteWithChildren
   '/tasklist/$tasklistId/task/new': typeof AuthTasklistTasklistIdTaskNewRoute
+  '/tasklist/$tasklistId/task/$taskId/edit': typeof AuthTasklistTasklistIdTaskTaskIdEditRoute
 }
 
 export interface FileRoutesById {
@@ -159,6 +179,7 @@ export interface FileRoutesById {
   '/_auth/dashboard': typeof AuthDashboardRoute
   '/_auth/tasklist/$tasklistId': typeof AuthTasklistTasklistIdRouteWithChildren
   '/_auth/tasklist/$tasklistId/task/new': typeof AuthTasklistTasklistIdTaskNewRoute
+  '/_auth/tasklist/$tasklistId/task/$taskId/edit': typeof AuthTasklistTasklistIdTaskTaskIdEditRoute
 }
 
 export interface FileRouteTypes {
@@ -170,6 +191,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/tasklist/$tasklistId'
     | '/tasklist/$tasklistId/task/new'
+    | '/tasklist/$tasklistId/task/$taskId/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -178,6 +200,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/tasklist/$tasklistId'
     | '/tasklist/$tasklistId/task/new'
+    | '/tasklist/$tasklistId/task/$taskId/edit'
   id:
     | '__root__'
     | '/'
@@ -186,6 +209,7 @@ export interface FileRouteTypes {
     | '/_auth/dashboard'
     | '/_auth/tasklist/$tasklistId'
     | '/_auth/tasklist/$tasklistId/task/new'
+    | '/_auth/tasklist/$tasklistId/task/$taskId/edit'
   fileRoutesById: FileRoutesById
 }
 
@@ -237,11 +261,16 @@ export const routeTree = rootRoute
       "filePath": "_auth/tasklist/$tasklistId.tsx",
       "parent": "/_auth",
       "children": [
-        "/_auth/tasklist/$tasklistId/task/new"
+        "/_auth/tasklist/$tasklistId/task/new",
+        "/_auth/tasklist/$tasklistId/task/$taskId/edit"
       ]
     },
     "/_auth/tasklist/$tasklistId/task/new": {
       "filePath": "_auth/tasklist/$tasklistId.task/new.tsx",
+      "parent": "/_auth/tasklist/$tasklistId"
+    },
+    "/_auth/tasklist/$tasklistId/task/$taskId/edit": {
+      "filePath": "_auth/tasklist/$tasklistId.task/$taskId.edit.tsx",
       "parent": "/_auth/tasklist/$tasklistId"
     }
   }
