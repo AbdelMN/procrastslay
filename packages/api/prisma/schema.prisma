@@ -44,7 +44,7 @@ model Task {
   id          String    @id @default(uuid())
   title       String
   description String?
-  difficulty  Int
+  difficulty  String
   dueDate     DateTime?
   completed   Boolean   @default(false)
   tasklistId  String?
