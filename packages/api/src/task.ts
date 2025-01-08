@@ -26,7 +26,7 @@ app.post('/', async (c) => {
     const user = await validateSessionToken(session);
     if (user.user) {
       const title = body.title;
-      const difficulty: number = body.difficulty;
+      const difficulty: string = body.difficulty;
       const tasklistId = body.tasklistId;
       const userId = user.user.id;
 
