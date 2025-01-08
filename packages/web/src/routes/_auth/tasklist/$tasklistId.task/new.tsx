@@ -14,7 +14,7 @@ import {
   SelectValueText,
 } from '@/components/ui/select';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 
 import { useForm } from '@tanstack/react-form';
 
@@ -24,7 +24,7 @@ export const Route = createFileRoute('/_auth/tasklist/$tasklistId/task/new')({
 
 function RouteComponent() {
   const { tasklistId: taskListId } = Route.useParams();
-
+  const navigate = useNavigate({ from: '/' });
   const queryClient = useQueryClient();
   const { data, isPending, isError } = useQuery(tasklistQuery);
   const addTask = useMutation({
@@ -174,9 +174,11 @@ function RouteComponent() {
 
         <Flex direction={'row'} gap={1}>
           <Button
-            onClick={() => {
-              setIsOpen(false);
-            }}
+            onClick={() =>
+              navigate({
+                to: `/tasklist/${taskListId}`,
+              })
+            }
           >
             Cancel
           </Button>
