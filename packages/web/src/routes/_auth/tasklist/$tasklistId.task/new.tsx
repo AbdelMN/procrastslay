@@ -1,5 +1,6 @@
 import { postTask, tasklistQuery } from '@/queries/task';
 import {
+  Box,
   Button,
   createListCollection,
   Flex,
@@ -17,16 +18,28 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 
 import { useForm } from '@tanstack/react-form';
-
+import DatePicker from 'react-datepicker';
+import { forwardRef } from 'react';
+import 'react-datepicker/dist/react-datepicker.css';
 export const Route = createFileRoute('/_auth/tasklist/$tasklistId/task/new')({
   component: RouteComponent,
 });
 
+type CustomInputProps = React.HTMLProps<HTMLButtonElement>;
 function RouteComponent() {
   const { tasklistId: taskListId } = Route.useParams();
   const navigate = useNavigate({ from: '/' });
   const queryClient = useQueryClient();
   const { data, isPending, isError } = useQuery(tasklistQuery);
+
+  const CustomInput = forwardRef<HTMLButtonElement, CustomInputProps>(
+    ({ value, onClick, className }, ref) => (
+      <button type="button" className={className} onClick={onClick} ref={ref}>
+        {value}
+      </button>
+    ),
+  );
+
   const addTask = useMutation({
     mutationFn: postTask,
     onSuccess: (_, variables) => {
@@ -41,7 +54,7 @@ function RouteComponent() {
       title: '',
       tasklist: [taskListId],
       difficulty: [''],
-      duedate: '',
+      dueDate: new Date(),
     },
     onSubmit: async ({ value }) => {
       console.log(value);
@@ -49,6 +62,7 @@ function RouteComponent() {
         title: value.title,
         difficulty: value.difficulty[0],
         tasklistId: value.tasklist[0],
+        dueDate: value.dueDate,
       });
     },
   });
@@ -75,6 +89,7 @@ function RouteComponent() {
 
   return (
     <form
+      id="test"
       onSubmit={(e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -124,16 +139,17 @@ function RouteComponent() {
           }}
         />
         <form.Field
-          name="duedate"
+          name="dueDate"
           children={(field) => {
             return (
-              <Input
-                width={'150px'}
-                id={field.name}
-                name={field.name}
-                value={field.state.value}
-                onBlur={field.handleBlur}
-                onChange={(e) => field.handleChange(e.target.value)}
+              <DatePicker
+                selected={field.state.value}
+                onChange={(date) => {
+                  if (date) {
+                    field.handleChange(date);
+                  }
+                }}
+                customInput={<CustomInput />}
               />
             );
           }}
