@@ -11,6 +11,7 @@ export type TaskToCreate = {
   title: string;
   difficulty: string;
   tasklistId: string;
+  dueDate: Date;
 };
 
 export type Task = {
@@ -19,6 +20,7 @@ export type Task = {
   difficulty: string;
   tasklistId: string;
   completed: boolean;
+  dueDate: Date;
 };
 
 const fetchTasklist = async () =>
@@ -35,11 +37,17 @@ export const postTask = async ({
   title,
   difficulty,
   tasklistId,
+  dueDate,
 }: TaskToCreate) =>
   ky
     .post('http://localhost:3000/task', {
       credentials: 'include',
-      json: { title: title, difficulty: difficulty, tasklistId: tasklistId },
+      json: {
+        title: title,
+        difficulty: difficulty,
+        tasklistId: tasklistId,
+        dueDate: dueDate,
+      },
     })
     .json() as unknown as Task;
 
