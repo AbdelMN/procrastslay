@@ -6,12 +6,14 @@ const patchTask = async ({
   title,
   difficulty,
   taskListId,
+  dueDate,
   completed,
 }: {
   id: string;
   title: string;
   difficulty: string;
   taskListId: string;
+  dueDate: Date;
   completed: boolean;
 }) => {
   const response = await ky
@@ -21,6 +23,7 @@ const patchTask = async ({
         title: title,
         difficulty: difficulty,
         tasklistId: taskListId,
+        dueDate: dueDate,
         completed: completed,
       },
     })

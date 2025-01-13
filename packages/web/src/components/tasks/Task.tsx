@@ -3,8 +3,10 @@ import {
   Button,
   createListCollection,
   Flex,
+  HStack,
   Input,
   Spinner,
+  Text,
 } from '@chakra-ui/react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { FaEllipsis } from 'react-icons/fa6';
@@ -29,6 +31,8 @@ import { useEditTask } from '@/queries/hooks/task';
 import { useForm } from '@tanstack/react-form';
 import { useQuery } from '@tanstack/react-query';
 import { useMatchRoute, useNavigate } from '@tanstack/react-router';
+import { forwardRef } from 'react';
+import DatePicker from 'react-datepicker';
 
 const Task = ({ task }: { task: Task }) => {
   const editTask = useEditTask(task.tasklistId);
@@ -37,7 +41,15 @@ const Task = ({ task }: { task: Task }) => {
   const isUrlEdit = matchRoute({
     to: `/tasklist/${task.tasklistId}/task/${task.id}/edit`,
   });
+  type CustomInputProps = React.HTMLProps<HTMLButtonElement>;
 
+  const CustomInput = forwardRef<HTMLButtonElement, CustomInputProps>(
+    ({ value, onClick, className }, ref) => (
+      <button type="button" className={className} onClick={onClick} ref={ref}>
+        {value}
+      </button>
+    ),
+  );
   const { data, isPending, isError } = useQuery(tasklistQuery);
 
   const difficulty = createListCollection({
@@ -56,7 +68,7 @@ const Task = ({ task }: { task: Task }) => {
       title: task.title,
       tasklist: [task.tasklistId.toString()],
       difficulty: [task.difficulty],
-      duedate: '',
+      dueDate: task.dueDate,
     },
     onSubmit: async ({ value }) => {
       editTask.mutate({
@@ -64,6 +76,7 @@ const Task = ({ task }: { task: Task }) => {
         title: value.title,
         difficulty: value.difficulty[0],
         taskListId: value.tasklist[0],
+        dueDate: value.dueDate,
         completed: task.completed,
       });
       navigate({
@@ -79,6 +92,9 @@ const Task = ({ task }: { task: Task }) => {
       value: item.id.toString(),
     })),
   });
+
+  const dueDate = new Date(task.dueDate);
+
   return !isUrlEdit ? (
     <Flex
       justifyContent={'space-between'}
@@ -94,37 +110,41 @@ const Task = ({ task }: { task: Task }) => {
               title: task.title,
               difficulty: task.difficulty,
               taskListId: task.tasklistId,
+              dueDate: task.dueDate,
               completed: Boolean(checked),
             });
           }}
         />
         {task.title}
       </Box>
-      <MenuRoot>
-        <MenuTrigger asChild>
-          <FaEllipsis />
-        </MenuTrigger>
-        <MenuContent>
-          <MenuItem
-            onClick={() =>
-              navigate({
-                to: `/tasklist/${task.tasklistId}/task/${task.id}/edit`,
-              })
-            }
-            value="edit"
-          >
-            Edit
-          </MenuItem>
+      <HStack>
+        <Text> {dueDate.toLocaleDateString('fr-FR')} </Text>
+        <MenuRoot>
+          <MenuTrigger asChild>
+            <FaEllipsis />
+          </MenuTrigger>
+          <MenuContent>
+            <MenuItem
+              onClick={() =>
+                navigate({
+                  to: `/tasklist/${task.tasklistId}/task/${task.id}/edit`,
+                })
+              }
+              value="edit"
+            >
+              Edit
+            </MenuItem>
 
-          <MenuItem
-            value="delete"
-            color="fg.error"
-            _hover={{ bg: 'bg.error', color: 'fg.error' }}
-          >
-            <DeleteTask task={task} />
-          </MenuItem>
-        </MenuContent>
-      </MenuRoot>
+            <MenuItem
+              value="delete"
+              color="fg.error"
+              _hover={{ bg: 'bg.error', color: 'fg.error' }}
+            >
+              <DeleteTask task={task} />
+            </MenuItem>
+          </MenuContent>
+        </MenuRoot>
+      </HStack>
     </Flex>
   ) : (
     <Box>
@@ -183,19 +203,18 @@ const Task = ({ task }: { task: Task }) => {
             }}
           />
           <form.Field
-            name="duedate"
+            name="dueDate"
             children={(field) => {
               return (
-                <Box>
-                  <Input
-                    width={'150px'}
-                    id={field.name}
-                    name={field.name}
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                  />
-                </Box>
+                <DatePicker
+                  selected={field.state.value}
+                  onChange={(date) => {
+                    if (date) {
+                      field.handleChange(date);
+                    }
+                  }}
+                  customInput={<CustomInput />}
+                />
               );
             }}
           />
