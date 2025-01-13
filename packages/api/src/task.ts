@@ -76,6 +76,7 @@ app.patch('/:id', async (c) => {
       const difficulty = body.difficulty;
       const tasklistId = body.tasklistId;
       const completed = body.completed;
+      const dueDate = body.dueDate;
       const userId = user.user.id;
       const editedTaskList = await prisma.task.update({
         where: {
@@ -86,6 +87,7 @@ app.patch('/:id', async (c) => {
           title,
           difficulty,
           tasklistId,
+          dueDate,
           completed,
         },
       });
