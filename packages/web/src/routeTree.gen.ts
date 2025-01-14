@@ -15,6 +15,7 @@ import { Route as LoginImport } from './routes/login'
 import { Route as AuthImport } from './routes/_auth'
 import { Route as IndexImport } from './routes/index'
 import { Route as AuthDashboardImport } from './routes/_auth/dashboard'
+import { Route as AuthHabitsIndexImport } from './routes/_auth/habits/index'
 import { Route as AuthTasklistTasklistIdImport } from './routes/_auth/tasklist/$tasklistId'
 import { Route as AuthTasklistTasklistIdTaskNewImport } from './routes/_auth/tasklist/$tasklistId.task/new'
 import { Route as AuthTasklistTasklistIdTaskTaskIdEditImport } from './routes/_auth/tasklist/$tasklistId.task/$taskId.edit'
@@ -41,6 +42,12 @@ const IndexRoute = IndexImport.update({
 const AuthDashboardRoute = AuthDashboardImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => AuthRoute,
+} as any)
+
+const AuthHabitsIndexRoute = AuthHabitsIndexImport.update({
+  id: '/habits/',
+  path: '/habits/',
   getParentRoute: () => AuthRoute,
 } as any)
 
@@ -103,6 +110,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthTasklistTasklistIdImport
       parentRoute: typeof AuthImport
     }
+    '/_auth/habits/': {
+      id: '/_auth/habits/'
+      path: '/habits'
+      fullPath: '/habits'
+      preLoaderRoute: typeof AuthHabitsIndexImport
+      parentRoute: typeof AuthImport
+    }
     '/_auth/tasklist/$tasklistId/task/new': {
       id: '/_auth/tasklist/$tasklistId/task/new'
       path: '/task/new'
@@ -142,11 +156,13 @@ const AuthTasklistTasklistIdRouteWithChildren =
 interface AuthRouteChildren {
   AuthDashboardRoute: typeof AuthDashboardRoute
   AuthTasklistTasklistIdRoute: typeof AuthTasklistTasklistIdRouteWithChildren
+  AuthHabitsIndexRoute: typeof AuthHabitsIndexRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
   AuthDashboardRoute: AuthDashboardRoute,
   AuthTasklistTasklistIdRoute: AuthTasklistTasklistIdRouteWithChildren,
+  AuthHabitsIndexRoute: AuthHabitsIndexRoute,
 }
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
@@ -157,6 +173,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/dashboard': typeof AuthDashboardRoute
   '/tasklist/$tasklistId': typeof AuthTasklistTasklistIdRouteWithChildren
+  '/habits': typeof AuthHabitsIndexRoute
   '/tasklist/$tasklistId/task/new': typeof AuthTasklistTasklistIdTaskNewRoute
   '/tasklist/$tasklistId/task/$taskId/edit': typeof AuthTasklistTasklistIdTaskTaskIdEditRoute
 }
@@ -167,6 +184,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/dashboard': typeof AuthDashboardRoute
   '/tasklist/$tasklistId': typeof AuthTasklistTasklistIdRouteWithChildren
+  '/habits': typeof AuthHabitsIndexRoute
   '/tasklist/$tasklistId/task/new': typeof AuthTasklistTasklistIdTaskNewRoute
   '/tasklist/$tasklistId/task/$taskId/edit': typeof AuthTasklistTasklistIdTaskTaskIdEditRoute
 }
@@ -178,6 +196,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/_auth/dashboard': typeof AuthDashboardRoute
   '/_auth/tasklist/$tasklistId': typeof AuthTasklistTasklistIdRouteWithChildren
+  '/_auth/habits/': typeof AuthHabitsIndexRoute
   '/_auth/tasklist/$tasklistId/task/new': typeof AuthTasklistTasklistIdTaskNewRoute
   '/_auth/tasklist/$tasklistId/task/$taskId/edit': typeof AuthTasklistTasklistIdTaskTaskIdEditRoute
 }
@@ -190,6 +209,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/dashboard'
     | '/tasklist/$tasklistId'
+    | '/habits'
     | '/tasklist/$tasklistId/task/new'
     | '/tasklist/$tasklistId/task/$taskId/edit'
   fileRoutesByTo: FileRoutesByTo
@@ -199,6 +219,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/dashboard'
     | '/tasklist/$tasklistId'
+    | '/habits'
     | '/tasklist/$tasklistId/task/new'
     | '/tasklist/$tasklistId/task/$taskId/edit'
   id:
@@ -208,6 +229,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/_auth/dashboard'
     | '/_auth/tasklist/$tasklistId'
+    | '/_auth/habits/'
     | '/_auth/tasklist/$tasklistId/task/new'
     | '/_auth/tasklist/$tasklistId/task/$taskId/edit'
   fileRoutesById: FileRoutesById
@@ -247,7 +269,8 @@ export const routeTree = rootRoute
       "filePath": "_auth.tsx",
       "children": [
         "/_auth/dashboard",
-        "/_auth/tasklist/$tasklistId"
+        "/_auth/tasklist/$tasklistId",
+        "/_auth/habits/"
       ]
     },
     "/login": {
@@ -264,6 +287,10 @@ export const routeTree = rootRoute
         "/_auth/tasklist/$tasklistId/task/new",
         "/_auth/tasklist/$tasklistId/task/$taskId/edit"
       ]
+    },
+    "/_auth/habits/": {
+      "filePath": "_auth/habits/index.tsx",
+      "parent": "/_auth"
     },
     "/_auth/tasklist/$tasklistId/task/new": {
       "filePath": "_auth/tasklist/$tasklistId.task/new.tsx",
