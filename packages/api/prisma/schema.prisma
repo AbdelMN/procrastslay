@@ -63,16 +63,24 @@ model Subtask {
 }
 
 model Habit {
-  id             String   @id @default(uuid())
+  id             String            @id @default(uuid())
   userId         String
   name           String
   frequencyType  String
   frequencyValue Int?
   days           String?
   completionMode String
-  goalValue      Int?
+  goalValue      Int
   unit           String?
-  createdAt      DateTime @default(now())
+  createdAt      DateTime          @default(now())
+  completions    HabitCompletion[]
+  user           User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+model HabitCompletion {
+  id      String   @unique
+  habitId String
+  count   Int
+  date    DateTime
+  habit   Habit    @relation(references: [id], fields: [habitId])
 }
