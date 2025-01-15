@@ -20,7 +20,7 @@ const Habit = ({ habit }: { habit: Habit }) => {
   const [progress, setProgress] = useState(0);
 
   return (
-    <Card.Root size="sm">
+    <Card.Root width={'700px'} size="sm">
       <Card.Header></Card.Header>
       <Card.Body color="fg.muted">
         <HStack justifyContent={'space-between'}>

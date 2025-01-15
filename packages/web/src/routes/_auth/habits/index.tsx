@@ -8,7 +8,7 @@ export const Route = createFileRoute('/_auth/habits/')({
 function RouteComponent() {
   return (
     <Center>
-      <Box width={'500px'}>
+      <Box>
         <HabitList />
       </Box>
     </Center>
