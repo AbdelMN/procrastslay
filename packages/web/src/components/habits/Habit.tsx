@@ -4,19 +4,25 @@ import { FaCircleCheck } from 'react-icons/fa6';
 import { ProgressCircleRing } from '../ui/progress-circle';
 import { useState } from 'react';
 
-type Habit = {
+export type HabitType = {
   id: string;
   userId: string;
   name: string;
-  frequencyType: string;
-  frequencyValue?: number;
-  days?: string;
   completionMode: string;
   goalValue: number;
   unit?: string;
   createdAt: string;
-};
-const Habit = ({ habit }: { habit: Habit }) => {
+} & (
+  | {
+      frequencyType: 'interval' | 'weekly';
+      frequencyValue: number;
+    }
+  | {
+      frequencyType: 'daily';
+      days: string[];
+    }
+);
+const Habit = ({ habit }: { habit: HabitType }) => {
   const [progress, setProgress] = useState(0);
 
   return (

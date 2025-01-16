@@ -1,19 +1,20 @@
 import { Box, VStack } from '@chakra-ui/react';
-import Habit from './Habit';
+import Habit, { HabitType } from './Habit';
 import { Tag } from '../ui/tag';
+import { getRouteApi } from '@tanstack/react-router';
 
-const mockData = [
+const mockData: HabitType[] = [
   {
     id: 'habit-1',
     userId: '1',
     name: 'Drink Water',
     frequencyType: 'daily',
 
-    days: '["Monday", "Wednesday", "Friday"]',
+    days: ['Monday', 'Wednesday', 'Friday'],
     completionMode: 'oneTime',
     goalValue: 1,
     unit: 'cups',
-    createdAt: '2025-01-01T08:00:00Z',
+    createdAt: '2025-01-01',
   },
   {
     id: 'habit-2',
@@ -25,7 +26,7 @@ const mockData = [
     completionMode: 'cumulative',
     goalValue: 3,
     unit: 'seances',
-    createdAt: '2025-01-02T08:00:00Z',
+    createdAt: '2025-01-02',
   },
   {
     id: 'habit-3',
@@ -37,82 +38,44 @@ const mockData = [
     completionMode: 'cumulative',
     goalValue: 20,
     unit: 'pages',
-    createdAt: '2025-01-03T08:00:00Z',
+    createdAt: '2025-01-03',
   },
 ];
 
-const habitCompletions = [
-  // Habit 1: Drink Water (one-time completion)
-  {
-    id: 'completion-1',
-    habitId: 'habit-1',
-    count: 1,
-    date: new Date('2025-01-01T09:00:00Z'), // Completed on the first day
-  },
-  {
-    id: 'completion-2',
-    habitId: 'habit-1',
-    count: 1,
-    date: new Date('2025-01-03T09:00:00Z'), // Completed on Friday
-  },
+const isHabitinDate = (habit: HabitType, date: Date) => {
+  switch (habit.frequencyType) {
+    case 'interval': {
+      const diffInTime = date.getTime() - new Date(habit.createdAt).getTime();
 
-  // Habit 2: Workout (cumulative completion)
-  {
-    id: 'completion-3',
-    habitId: 'habit-2',
-    count: 1,
-    date: new Date('2025-01-05T10:00:00Z'), // First workout of the week
-  },
-  {
-    id: 'completion-4',
-    habitId: 'habit-2',
-    count: 2,
-    date: new Date('2025-01-12T10:00:00Z'), // Second workout of the week
-  },
-  {
-    id: 'completion-5',
-    habitId: 'habit-2',
-    count: 3,
-    date: new Date('2025-01-19T10:00:00Z'), // Completed all three workouts
-  },
+      const diffInDays = diffInTime / (1000 * 3600 * 24);
 
-  // Habit 3: Read a Book (cumulative completion)
-  {
-    id: 'completion-6',
-    habitId: 'habit-3',
-    count: 5,
-    date: new Date('2025-01-06T11:00:00Z'), // 5 pages read
-  },
-  {
-    id: 'completion-7',
-    habitId: 'habit-3',
-    count: 15,
-    date: new Date('2025-01-09T11:00:00Z'), // 15 pages read (goal for interval)
-  },
-  {
-    id: 'completion-8',
-    habitId: 'habit-3',
-    count: 20,
-    date: new Date('2025-01-12T11:00:00Z'), // Completed the goal of 20 pages
-  },
-];
+      return diffInDays >= 0 && diffInDays % habit.frequencyValue === 0;
+    }
 
+    case 'daily': {
+      const localDate = date.toLocaleDateString('en-EN', { weekday: 'long' });
+
+      return habit.days.includes(localDate);
+    }
+    case 'weekly':
+      return true;
+    default:
+      throw new Error('Impossible habit on invalid FrequencyType');
+  }
+};
+const route = getRouteApi('/_auth/habits/');
 const HabitList = () => {
-  const date = new Date('2025-01-01T09:00:00Z');
+  const { filter } = route.useSearch();
+  const [day, month, year] = filter.split('-');
+  const date = new Date(`${year}-${month}-${day}`);
+  const habitByDate = mockData.filter((habit) => isHabitinDate(habit, date));
 
-  const habits = habitCompletions
-    .filter(
-      (habitCompletion) => habitCompletion.date.getTime() === date.getTime(),
-    )
-    .map((habitCompletion) =>
-      mockData.find(({ id }) => id === habitCompletion.habitId),
-    );
-
-  console.log(habits);
   return (
     <Box>
       <Tag closable> {date.toISOString()} </Tag>
-      <VStack>{habits.map((habit) => habit && <Habit habit={habit} />)}</VStack>
+      <VStack>
+        {habitByDate.map((habit) => habit && <Habit habit={habit} />)}
+      </VStack>
     </Box>
   );
 };
