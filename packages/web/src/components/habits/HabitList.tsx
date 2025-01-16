@@ -1,7 +1,8 @@
-import { Box, VStack } from '@chakra-ui/react';
+import { Box, TagCloseTrigger, VStack } from '@chakra-ui/react';
 import Habit, { HabitType } from './Habit';
-import { Tag } from '../ui/tag';
-import { getRouteApi } from '@tanstack/react-router';
+import { Tag } from '@chakra-ui/react';
+import { getRouteApi, useNavigate } from '@tanstack/react-router';
+import { CloseButton } from '../ui/close-button';
 
 const mockData: HabitType[] = [
   {
@@ -66,15 +67,37 @@ const isHabitinDate = (habit: HabitType, date: Date) => {
 const route = getRouteApi('/_auth/habits/');
 const HabitList = () => {
   const { filter } = route.useSearch();
-  const [day, month, year] = filter.split('-');
-  const date = new Date(`${year}-${month}-${day}`);
-  const habitByDate = mockData.filter((habit) => isHabitinDate(habit, date));
+  const navigate = useNavigate({ from: '/' });
+  if (filter) {
+    const [day, month, year] = filter.split('-');
+    const date = new Date(`${year}-${month}-${day}`);
+    const habitByDate = mockData.filter((habit) => isHabitinDate(habit, date));
 
+    return (
+      <Box>
+        <Tag.Root>
+          <Tag.Label>{date.toISOString()}</Tag.Label>
+          <TagCloseTrigger
+            onClick={() =>
+              navigate({
+                to: '/habits',
+              })
+            }
+          >
+            <CloseButton size={'xs'} />
+          </TagCloseTrigger>
+        </Tag.Root>
+
+        <VStack>
+          {habitByDate.map((habit) => habit && <Habit habit={habit} />)}
+        </VStack>
+      </Box>
+    );
+  }
   return (
     <Box>
-      <Tag closable> {date.toISOString()} </Tag>
       <VStack>
-        {habitByDate.map((habit) => habit && <Habit habit={habit} />)}
+        {mockData.map((habit) => habit && <Habit habit={habit} />)}
       </VStack>
     </Box>
   );
