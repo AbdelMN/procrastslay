@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import HabitList from '@/components/habits/HabitList';
 import { Box, Center } from '@chakra-ui/react';
+import HabitDays from '@/components/habits/HabitDays';
 type HabitSearch = {
   filter?: string;
 };
@@ -13,10 +14,13 @@ export const Route = createFileRoute('/_auth/habits/')({
 
 function RouteComponent() {
   return (
-    <Center>
-      <Box>
-        <HabitList />
-      </Box>
-    </Center>
+    <>
+      <HabitDays />
+      <Center>
+        <Box>
+          <HabitList />
+        </Box>
+      </Center>
+    </>
   );
 }
