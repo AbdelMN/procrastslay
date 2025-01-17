@@ -1,4 +1,4 @@
-import { Box, TagCloseTrigger, VStack } from '@chakra-ui/react';
+import { Box, VStack } from '@chakra-ui/react';
 import Habit, { HabitType } from './Habit';
 import { Tag } from '@chakra-ui/react';
 import { getRouteApi, useNavigate } from '@tanstack/react-router';
@@ -69,27 +69,28 @@ const HabitList = () => {
   const { filter } = route.useSearch();
   const navigate = useNavigate({ from: '/' });
   if (filter) {
-    const [day, month, year] = filter.split('-');
-    const date = new Date(`${year}-${month}-${day}`);
+    const date = new Date(filter);
     const habitByDate = mockData.filter((habit) => isHabitinDate(habit, date));
 
     return (
       <Box>
         <Tag.Root>
           <Tag.Label>{date.toISOString()}</Tag.Label>
-          <TagCloseTrigger
+
+          <CloseButton
             onClick={() =>
               navigate({
                 to: '/habits',
               })
             }
-          >
-            <CloseButton size={'xs'} />
-          </TagCloseTrigger>
+            size={'xs'}
+          />
         </Tag.Root>
 
         <VStack>
-          {habitByDate.map((habit) => habit && <Habit habit={habit} />)}
+          {habitByDate.map((habit) => (
+            <Habit key={habit.id} habit={habit} />
+          ))}
         </VStack>
       </Box>
     );
@@ -97,7 +98,9 @@ const HabitList = () => {
   return (
     <Box>
       <VStack>
-        {mockData.map((habit) => habit && <Habit habit={habit} />)}
+        {mockData.map((habit) => (
+          <Habit key={habit.id} habit={habit} />
+        ))}
       </VStack>
     </Box>
   );
