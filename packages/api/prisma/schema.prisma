@@ -68,7 +68,7 @@ model Habit {
   name           String
   frequencyType  String
   frequencyValue Int?
-  days           String?
+  days           String[]
   completionMode String
   goalValue      Int
   unit           String?
