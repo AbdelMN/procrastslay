@@ -35,6 +35,9 @@ importers:
       '@hono/node-server':
         specifier: ^1.13.7
         version: 1.13.7(hono@4.6.13)
+      '@hono/zod-validator':
+        specifier: ^0.4.2
+        version: 0.4.2(hono@4.6.13)(zod@3.23.8)
       '@oslojs/crypto':
         specifier: ^1.0.1
         version: 1.0.1
@@ -53,6 +56,9 @@ importers:
       hono:
         specifier: ^4.6.13
         version: 4.6.13
+      zod:
+        specifier: ^3.23.8
+        version: 3.23.8
     devDependencies:
       '@types/node':
         specifier: ^20.17.9
@@ -1421,6 +1427,16 @@ packages:
       hono: ^4
     dependencies:
       hono: 4.6.13
+    dev: false
+
+  /@hono/zod-validator@0.4.2(hono@4.6.13)(zod@3.23.8):
+    resolution: {integrity: sha512-1rrlBg+EpDPhzOV4hT9pxr5+xDVmKuz6YJl+la7VCwK6ass5ldyKm5fD+umJdV2zhHD6jROoCCv8NbTwyfhT0g==}
+    peerDependencies:
+      hono: '>=3.9.0'
+      zod: ^3.19.1
+    dependencies:
+      hono: 4.6.13
+      zod: 3.23.8
     dev: false
 
   /@humanfs/core@0.19.0:

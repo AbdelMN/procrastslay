@@ -5,12 +5,14 @@
   },
   "dependencies": {
     "@hono/node-server": "^1.13.7",
+    "@hono/zod-validator": "^0.4.2",
     "@oslojs/crypto": "^1.0.1",
     "@oslojs/encoding": "^1.1.0",
     "@prisma/client": "5.21.1",
     "arctic": "^2.3.0",
     "dotenv": "^16.4.7",
-    "hono": "^4.6.13"
+    "hono": "^4.6.13",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/node": "^20.17.9",
