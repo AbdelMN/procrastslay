@@ -78,9 +78,11 @@ model Habit {
 }
 
 model HabitCompletion {
-  id      String   @unique
+  id      String   @id @default(uuid())
   habitId String
   count   Int
   date    DateTime
   habit   Habit    @relation(references: [id], fields: [habitId])
+
+  @@unique(name: "habitId_date", [habitId, date])
 }
