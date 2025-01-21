@@ -12,7 +12,7 @@ const HabitSchema = z
     completionMode: z.string(),
     goalValue: z.number(),
     unit: z.string().optional(),
-    createdAt: z.date(),
+    createdAt: z.string(),
     frequencyType: z.enum(['interval', 'weekly', 'daily']),
   })
   .and(
@@ -32,11 +32,11 @@ type HabitType = z.infer<typeof HabitSchema>;
 const HabitCompletionSchema = z.object({
   habitId: z.string(),
   count: z.number(),
-  date: z.date(),
+  date: z.string(),
 });
 
 const FilterHabitSchema = z.object({
-  date: z.date(),
+  date: z.string().transform((str) => new Date(str)),
 });
 
 app.post('/', zValidator('json', HabitSchema), sessionMiddleware, async (c) => {
@@ -75,7 +75,7 @@ app.post('/', zValidator('json', HabitSchema), sessionMiddleware, async (c) => {
           goalValue,
           unit,
           userId,
-          createdAt,
+          createdAt: new Date(createdAt),
           frequencyType,
           days,
         },
@@ -165,7 +165,7 @@ app.post(
         where: {
           habitId_date: {
             habitId: habitId,
-            date,
+            date: new Date(date),
           },
         },
         update: {
@@ -173,7 +173,7 @@ app.post(
         },
         create: {
           habitId,
-          date,
+          date: new Date(date),
           count,
         },
       });
