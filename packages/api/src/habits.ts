@@ -27,6 +27,7 @@ const HabitSchema = z
       }),
     ]),
   );
+type HabitType = z.infer<typeof HabitSchema>;
 
 const FilterHabitSchema = z.object({
   day: z.string().optional(),
@@ -79,6 +80,28 @@ app.post('/', zValidator('json', HabitSchema), sessionMiddleware, async (c) => {
   }
 });
 
+const isHabitinDate = (habit, date: Date) => {
+  switch (habit.frequencyType) {
+    case 'interval': {
+      const diffInTime = date.getTime() - new Date(habit.createdAt).getTime();
+
+      const diffInDays = diffInTime / (1000 * 3600 * 24);
+
+      return diffInDays >= 0 && diffInDays % habit.frequencyValue === 0;
+    }
+
+    case 'daily': {
+      const localDate = date.toLocaleDateString('en-EN', { weekday: 'long' });
+
+      return habit.days.includes(localDate);
+    }
+    case 'weekly':
+      return true;
+    default:
+      throw new Error('Impossible habit on invalid FrequencyType');
+  }
+};
+
 app.get('/', sessionMiddleware, async (c) => {
   const user = c.get('user');
 
@@ -94,5 +117,32 @@ app.get('/', sessionMiddleware, async (c) => {
     return c.json(habit);
   }
 });
+
+app.post(
+  '/getbydate',
+  zValidator('json', FilterHabitSchema),
+  sessionMiddleware,
+  async (c) => {
+    const filter = c.req.valid('json');
+    const user = c.get('user');
+    const { day } = filter;
+    if (user) {
+      const userId = user.id;
+      if (day) {
+        const date = new Date(day);
+        const habits = await prisma.habit.findMany({
+          where: {
+            userId: user.id,
+          },
+        });
+
+        const habitByDate = habits.filter((habit) =>
+          isHabitinDate(habit, date),
+        );
+        return c.json(habitByDate);
+      }
+    }
+  },
+);
 
 export default app;
