@@ -12,7 +12,7 @@ const HabitSchema = z
     completionMode: z.string(),
     goalValue: z.number(),
     unit: z.string().optional(),
-    createdAt: z.string(),
+    createdAt: z.date(),
     frequencyType: z.enum(['interval', 'weekly', 'daily']),
   })
   .and(
@@ -29,8 +29,14 @@ const HabitSchema = z
   );
 type HabitType = z.infer<typeof HabitSchema>;
 
+const HabitCompletionSchema = z.object({
+  habitId: z.string(),
+  count: z.number(),
+  date: z.date(),
+});
+
 const FilterHabitSchema = z.object({
-  day: z.string().optional(),
+  date: z.date(),
 });
 
 app.post('/', zValidator('json', HabitSchema), sessionMiddleware, async (c) => {
@@ -110,7 +116,7 @@ app.get('/', sessionMiddleware, async (c) => {
 
     const habit = await prisma.habit.findMany({
       where: {
-        userId: user.id,
+        userId: userId,
       },
     });
 
@@ -125,24 +131,54 @@ app.post(
   async (c) => {
     const filter = c.req.valid('json');
     const user = c.get('user');
-    const { day } = filter;
+    const { date } = filter;
     if (user) {
       const userId = user.id;
-      if (day) {
-        const date = new Date(day);
-        const habits = await prisma.habit.findMany({
-          where: {
-            userId: user.id,
-          },
-        });
 
-        const habitByDate = habits.filter((habit) =>
-          isHabitinDate(habit, date),
-        );
-        return c.json(habitByDate);
-      }
+      const habits = await prisma.habit.findMany({
+        where: {
+          userId: user.id,
+        },
+        include: {
+          completions: { where: { date } },
+        },
+      });
+
+      const habitByDate = habits.filter((habit) => isHabitinDate(habit, date));
+      return c.json(habitByDate);
     }
   },
 );
 
+app.post(
+  '/complete',
+  zValidator('json', HabitCompletionSchema),
+  sessionMiddleware,
+  async (c) => {
+    const completedHabit = c.req.valid('json');
+    const user = c.get('user');
+    const { habitId, count, date } = completedHabit;
+    if (user) {
+      const userId = user.id;
+
+      const result = await prisma.habitCompletion.upsert({
+        where: {
+          habitId_date: {
+            habitId: habitId,
+            date,
+          },
+        },
+        update: {
+          count,
+        },
+        create: {
+          habitId,
+          date,
+          count,
+        },
+      });
+      return c.json(result);
+    }
+  },
+);
 export default app;
