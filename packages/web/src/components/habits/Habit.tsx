@@ -4,6 +4,7 @@ import { FaCircleCheck } from 'react-icons/fa6';
 import { ProgressCircleRing } from '../ui/progress-circle';
 
 import { HabitType } from '@/queries/habit';
+import { useCompleteHabit } from '@/queries/hooks/habit';
 
 const getLastDays = () => {
   const daysList = [];
@@ -20,14 +21,9 @@ const getLastDays = () => {
 
 const last7Days = getLastDays();
 
-const Habit = ({
-  habit,
-  multipleDays = false,
-}: {
-  habit: HabitType;
-  multipleDays: boolean;
-}) => {
-  const completions = multipleDays
+const Habit = ({ habit, date }: { habit: HabitType; date?: Date }) => {
+  const completeHabit = useCompleteHabit(date);
+  const completions = !date
     ? last7Days.map((day) => {
         const test = habit.completions.find(
           (o) => new Date(o.date).toISOString() == new Date(day).toISOString(),
@@ -42,6 +38,7 @@ const Habit = ({
             habit.completions && habit.completions.length > 0
               ? habit.completions[0].count
               : 0,
+          date: date,
         },
       ];
 
@@ -51,23 +48,41 @@ const Habit = ({
       <Card.Body color="fg.muted">
         <HStack justifyContent={'space-between'}>
           <Heading size="md"> {habit.name} </Heading>
-          {!multipleDays ? (
+          {date ? (
             <ProgressCircleRoot
               colorPalette={'gray'}
               size={'sm'}
-              value={(completions[0].count * 100) / habit.goalValue}
+              value={Math.min(
+                (completions[0].count * 100) / habit.goalValue,
+                100,
+              )}
             >
-              {!(completions[0].count == 100) ? (
+              {!Math.min(
+                (completions[0].count * 100) / habit.goalValue,
+                100,
+              ) ? (
                 <ProgressCircleRing
                   borderRadius={'20px'}
                   _hover={{ bg: 'gray.700' }}
-                  onClick={() => {}}
+                  onClick={() => {
+                    completeHabit.mutate({
+                      habitId: habit.id,
+                      count: completions[0].count + 1,
+                      date: new Date(completions[0].date),
+                    });
+                  }}
                 />
               ) : (
                 <FaCircleCheck
                   color={'gray'}
                   size={'32px'}
-                  onClick={() => {}}
+                  onClick={() => {
+                    completeHabit.mutate({
+                      habitId: habit.id,
+                      count: 0,
+                      date: new Date(completions[0].date),
+                    });
+                  }}
                 />
               )}
             </ProgressCircleRoot>
@@ -77,19 +92,37 @@ const Habit = ({
                 <ProgressCircleRoot
                   colorPalette={'gray'}
                   size={'sm'}
-                  value={(completion.count * 100) / habit.goalValue}
+                  value={Math.min(
+                    (completion.count * 100) / habit.goalValue,
+                    100,
+                  )}
                 >
-                  {!(completion.count == 100) ? (
+                  {!Math.min(
+                    (completion.count * 100) / habit.goalValue,
+                    100,
+                  ) ? (
                     <ProgressCircleRing
                       borderRadius={'20px'}
                       _hover={{ bg: 'gray.700' }}
-                      onClick={() => {}}
+                      onClick={() => {
+                        completeHabit.mutate({
+                          habitId: habit.id,
+                          count: completion.count + 1,
+                          date: new Date(completion.date),
+                        });
+                      }}
                     />
                   ) : (
                     <FaCircleCheck
                       color={'gray'}
                       size={'32px'}
-                      onClick={() => {}}
+                      onClick={() => {
+                        completeHabit.mutate({
+                          habitId: habit.id,
+                          count: 0,
+                          date: new Date(completion.date),
+                        });
+                      }}
                     />
                   )}
                 </ProgressCircleRoot>

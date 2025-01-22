@@ -44,6 +44,6 @@ const fetchHabitsbyDate = async (date: Date) =>
 
 export const getHabits = (day?: string) =>
   queryOptions({
-    queryKey: day ? ['habits', day] : ['habits'],
+    queryKey: day ? ['habits', new Date(day)] : ['habits'],
     queryFn: day ? () => fetchHabitsbyDate(new Date(day)) : fetchHabits,
   });

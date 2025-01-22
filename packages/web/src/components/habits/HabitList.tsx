@@ -34,7 +34,7 @@ const HabitList = () => {
 
         <VStack>
           {data.map((habit) => (
-            <Habit key={habit.id} habit={habit} multipleDays={false} />
+            <Habit key={habit.id} habit={habit} date={date} />
           ))}
         </VStack>
       </Box>
@@ -44,7 +44,7 @@ const HabitList = () => {
     <Box>
       <VStack>
         {data.map((habit) => (
-          <Habit key={habit.id} habit={habit} multipleDays={true} />
+          <Habit key={habit.id} habit={habit} />
         ))}
       </VStack>
     </Box>
