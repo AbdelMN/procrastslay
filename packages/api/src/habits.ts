@@ -113,10 +113,22 @@ app.get('/', sessionMiddleware, async (c) => {
 
   if (user) {
     const userId = user.id;
-
+    const today = new Date();
+    const sixDayAgo = new Date();
+    sixDayAgo.setDate(today.getDate() - 6);
     const habit = await prisma.habit.findMany({
       where: {
         userId: userId,
+      },
+      include: {
+        completions: {
+          where: {
+            date: {
+              gte: sixDayAgo,
+              lte: today,
+            },
+          },
+        },
       },
     });
 
