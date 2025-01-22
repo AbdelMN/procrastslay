@@ -2,18 +2,24 @@ import { Card, Heading, HStack, ProgressCircleRoot } from '@chakra-ui/react';
 
 import { FaCircleCheck } from 'react-icons/fa6';
 import { ProgressCircleRing } from '../ui/progress-circle';
-import { useState } from 'react';
+
 import { HabitType } from '@/queries/habit';
 
-const mockCompletions = [
-  { count: 0 },
-  { count: 0 },
-  { count: 0 },
-  { count: 0 },
-  { count: 0 },
-  { count: 0 },
-  { count: 0 },
-];
+const getLastDays = () => {
+  const daysList = [];
+  const today = new Date();
+
+  for (let i = 6; i >= 0; i--) {
+    const date = new Date();
+    date.setDate(today.getDate() - i);
+
+    daysList.push(date.toISOString().split('T')[0]);
+  }
+  return daysList;
+};
+
+const last7Days = getLastDays();
+
 const Habit = ({
   habit,
   multipleDays = false,
@@ -21,11 +27,24 @@ const Habit = ({
   habit: HabitType;
   multipleDays: boolean;
 }) => {
-  const count =
-    habit.completions && habit.completions.length > 0
-      ? habit.completions[0].count
-      : 0;
-  console.log(count);
+  const completions = multipleDays
+    ? last7Days.map((day) => {
+        const test = habit.completions.find(
+          (o) => new Date(o.date).toISOString() == new Date(day).toISOString(),
+        );
+        return !test
+          ? { date: day, count: 0 }
+          : { date: day, count: test.count };
+      })
+    : [
+        {
+          count:
+            habit.completions && habit.completions.length > 0
+              ? habit.completions[0].count
+              : 0,
+        },
+      ];
+
   return (
     <Card.Root width={'700px'} size="sm">
       <Card.Header></Card.Header>
@@ -36,9 +55,9 @@ const Habit = ({
             <ProgressCircleRoot
               colorPalette={'gray'}
               size={'sm'}
-              value={(count * 100) / habit.goalValue}
+              value={(completions[0].count * 100) / habit.goalValue}
             >
-              {!(count == 100) ? (
+              {!(completions[0].count == 100) ? (
                 <ProgressCircleRing
                   borderRadius={'20px'}
                   _hover={{ bg: 'gray.700' }}
@@ -54,13 +73,13 @@ const Habit = ({
             </ProgressCircleRoot>
           ) : (
             <HStack>
-              {mockCompletions.map((completion) => (
+              {completions.map((completion) => (
                 <ProgressCircleRoot
                   colorPalette={'gray'}
                   size={'sm'}
-                  value={completion.count}
+                  value={(completion.count * 100) / habit.goalValue}
                 >
-                  {!(count == 100) ? (
+                  {!(completion.count == 100) ? (
                     <ProgressCircleRing
                       borderRadius={'20px'}
                       _hover={{ bg: 'gray.700' }}
