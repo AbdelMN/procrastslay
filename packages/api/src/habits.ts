@@ -115,7 +115,7 @@ app.get('/', sessionMiddleware, async (c) => {
     const userId = user.id;
     const today = new Date();
     const sixDayAgo = new Date();
-    sixDayAgo.setDate(today.getDate() - 6);
+    sixDayAgo.setDate(today.getDate() - 7);
     const habit = await prisma.habit.findMany({
       where: {
         userId: userId,
