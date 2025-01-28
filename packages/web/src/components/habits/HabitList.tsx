@@ -1,10 +1,11 @@
-import { Box, Spinner, VStack } from '@chakra-ui/react';
+import { Box, HStack, Spinner, VStack } from '@chakra-ui/react';
 import Habit from './Habit';
 import { Tag } from '@chakra-ui/react';
 import { getRouteApi, useNavigate } from '@tanstack/react-router';
 import { CloseButton } from '../ui/close-button';
 import { useQuery } from '@tanstack/react-query';
 import { getHabits } from '@/queries/habit';
+import AddHabit from './AddHabit';
 
 const route = getRouteApi('/_auth/habits/');
 const HabitList = () => {
@@ -19,19 +20,21 @@ const HabitList = () => {
 
     return (
       <Box>
-        <Tag.Root>
-          <Tag.Label>{date.toISOString()}</Tag.Label>
+        <HStack justifyContent={'space-between'}>
+          <Tag.Root>
+            <Tag.Label>{date.toISOString()}</Tag.Label>
 
-          <CloseButton
-            onClick={() =>
-              navigate({
-                to: '/habits',
-              })
-            }
-            size={'xs'}
-          />
-        </Tag.Root>
-
+            <CloseButton
+              onClick={() =>
+                navigate({
+                  to: '/habits',
+                })
+              }
+              size={'xs'}
+            />
+          </Tag.Root>
+          <AddHabit />
+        </HStack>
         <VStack>
           {data.map((habit) => (
             <Habit key={habit.id} habit={habit} date={date} />
