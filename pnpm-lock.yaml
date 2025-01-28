@@ -112,6 +112,9 @@ importers:
       '@tanstack/react-router':
         specifier: ^1.81.14
         version: 1.81.14(react-dom@18.3.1)(react@18.3.1)
+      '@tanstack/zod-form-adapter':
+        specifier: ^0.41.3
+        version: 0.41.3(zod@3.24.1)
       ky:
         specifier: ^1.7.2
         version: 1.7.2
@@ -137,8 +140,8 @@ importers:
         specifier: ^5.3.0
         version: 5.3.0(react@18.3.1)
       zod:
-        specifier: ^3.23.8
-        version: 3.23.8
+        specifier: ^3.24.1
+        version: 3.24.1
     devDependencies:
       '@eslint/js':
         specifier: ^9.13.0
@@ -1853,6 +1856,12 @@ packages:
       '@tanstack/store': 0.6.0
     dev: false
 
+  /@tanstack/form-core@0.41.3:
+    resolution: {integrity: sha512-ifGRimfnYgc+SQikx8ngWGhIxs5UHutSwUQ1IPFHZ6PRAfCTEEqDtXqaWZGkuzvf8itoxXdwsR+chEdwiPtsPA==}
+    dependencies:
+      '@tanstack/store': 0.7.0
+    dev: false
+
   /@tanstack/history@1.81.9:
     resolution: {integrity: sha512-9MPknhhnvZKifK4jSvva6NDqYQwsNaptrRzO4ejk6yCLyi4koVG4u3C4VCeClYZY5etLEQbO8wXU9knEFZpMeg==}
     engines: {node: '>=12'}
@@ -1955,7 +1964,7 @@ packages:
       '@tanstack/virtual-file-routes': 1.81.9
       prettier: 3.3.3
       tsx: 4.19.2
-      zod: 3.23.8
+      zod: 3.24.1
     dev: true
 
   /@tanstack/router-plugin@1.81.9(vite@5.4.10):
@@ -1991,7 +2000,7 @@ packages:
       chokidar: 3.6.0
       unplugin: 1.16.0
       vite: 5.4.10
-      zod: 3.23.8
+      zod: 3.24.1
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -2003,10 +2012,23 @@ packages:
     resolution: {integrity: sha512-+m2OBglsjXcLmmKOX6/9v8BDOCtyxhMmZLsRUDswOOSdIIR9mvv6i0XNKsmTh3AlYU8c1mRcodC8/Vyf+69VlQ==}
     dev: false
 
+  /@tanstack/store@0.7.0:
+    resolution: {integrity: sha512-CNIhdoUsmD2NolYuaIs8VfWM467RK6oIBAW4nPEKZhg1smZ+/CwtCdpURgp7nxSqOaV9oKkzdWD80+bC66F/Jg==}
+    dev: false
+
   /@tanstack/virtual-file-routes@1.81.9:
     resolution: {integrity: sha512-jV5mWJrsh3QXHpb/by6udSqwva0qK50uYHpIXvKsLaxnlbjbLfflfPjFyRWXbMtZsnzCjSUqp5pm5/p+Wpaerg==}
     engines: {node: '>=12'}
     dev: true
+
+  /@tanstack/zod-form-adapter@0.41.3(zod@3.24.1):
+    resolution: {integrity: sha512-7BUTtRmmLfwWzBnlD0+wWqtlbqU5oAIjo4QK85iAyjilkz1HfVDXU7DyYiGRvU3+/cpEQYytKGGKB5oWNh5t0g==}
+    peerDependencies:
+      zod: ^3.x
+    dependencies:
+      '@tanstack/form-core': 0.41.3
+      zod: 3.24.1
+    dev: false
 
   /@tsconfig/node10@1.0.11:
     resolution: {integrity: sha512-DcRjDCujK/kCk/cUe8Xz8ZSpm8mS3mNNpta+jGCA6USEDfktlNvm1+IuZ9eTcDbNk41BHwpHHeW+N1lKCz4zOw==}
@@ -6865,3 +6887,7 @@ packages:
 
   /zod@3.23.8:
     resolution: {integrity: sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g==}
+    dev: false
+
+  /zod@3.24.1:
+    resolution: {integrity: sha512-muH7gBL9sI1nciMZV67X5fTKKBLtwpZ5VBp1vsOQzj1MhrBZ4wlVCm3gedKZWLp0Oyel8sIGfeiz54Su+OVT+A==}
