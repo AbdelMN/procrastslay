@@ -3,7 +3,7 @@ import { Card, Heading, HStack, ProgressCircleRoot } from '@chakra-ui/react';
 import { FaCircleCheck } from 'react-icons/fa6';
 import { ProgressCircleRing } from '../ui/progress-circle';
 
-import { HabitType } from '@/queries/habit';
+import { ReceivedHabitType } from '@/queries/habit';
 import { useCompleteHabit } from '@/queries/hooks/habit';
 
 const getLastDays = () => {
@@ -21,7 +21,7 @@ const getLastDays = () => {
 
 const last7Days = getLastDays();
 
-const Habit = ({ habit, date }: { habit: HabitType; date?: Date }) => {
+const Habit = ({ habit, date }: { habit: ReceivedHabitType; date?: Date }) => {
   const completeHabit = useCompleteHabit(date);
   const completions = !date
     ? last7Days.map((day) => {
