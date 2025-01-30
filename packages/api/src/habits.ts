@@ -48,7 +48,7 @@ app.post('/', zValidator('json', HabitSchema), sessionMiddleware, async (c) => {
     const userId = user.id;
     const { name, completionMode, goalValue, unit, createdAt, frequencyType } =
       receivedHabit;
-
+    console.log(receivedHabit);
     if (frequencyType === 'interval' || frequencyType === 'weekly') {
       const { frequencyValue } = receivedHabit;
       const habit = await prisma.habit.create({
@@ -64,6 +64,7 @@ app.post('/', zValidator('json', HabitSchema), sessionMiddleware, async (c) => {
           days: [''],
         },
       });
+
       return c.json(habit);
     }
     if (frequencyType === 'daily') {
@@ -89,9 +90,12 @@ app.post('/', zValidator('json', HabitSchema), sessionMiddleware, async (c) => {
 const isHabitinDate = (habit, date: Date) => {
   switch (habit.frequencyType) {
     case 'interval': {
-      const diffInTime = date.getTime() - new Date(habit.createdAt).getTime();
+      const habitDate = new Date(habit.createdAt);
+      habitDate.setUTCHours(0, 0, 0, 0);
+      date.setUTCHours(0, 0, 0, 0);
+      const diffInTime = date.getTime() - habitDate.getTime();
 
-      const diffInDays = diffInTime / (1000 * 3600 * 24);
+      const diffInDays = Math.floor(diffInTime / (1000 * 3600 * 24));
 
       return diffInDays >= 0 && diffInDays % habit.frequencyValue === 0;
     }
@@ -157,6 +161,7 @@ app.post(
       });
 
       const habitByDate = habits.filter((habit) => isHabitinDate(habit, date));
+
       return c.json(habitByDate);
     }
   },
