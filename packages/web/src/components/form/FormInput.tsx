@@ -7,10 +7,10 @@ export const FormInput: FC<FormFieldProps> = (props) => {
   const { field } = props;
 
   const error = field.state.meta.errors.join(',');
-  console.log(error);
 
   return (
     <Field
+      invalid={error.length > 0}
       label={props.label}
       required={props.required}
       helperText={props.helperText}
@@ -24,7 +24,6 @@ export const FormInput: FC<FormFieldProps> = (props) => {
         onBlur={field.handleBlur}
         onChange={(e) => field.handleChange(e.target.value)}
       />
-      {error}
     </Field>
   );
 };

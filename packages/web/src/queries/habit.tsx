@@ -42,7 +42,7 @@ export const postHabit = async (habit: HabitType) => {
   return ky.post('http://localhost:3000/habit', {
     credentials: 'include',
     json: {
-      habitData,
+      ...habitData,
       frequencyType,
       ...(frequencyType === 'interval' || frequencyType === 'weekly'
         ? { frequencyValue: habit.frequencyValue }

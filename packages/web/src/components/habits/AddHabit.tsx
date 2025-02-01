@@ -24,20 +24,20 @@ const HabitSchema = z
   .object({
     name: z.string(),
     completionMode: z.string(),
-    goalValue: z.coerce.number(),
+    goalValue: z.coerce.number().positive(),
     unit: z.string().optional(),
     createdAt: z.string(),
     frequencyType: z.enum(['interval', 'weekly', 'daily']),
   })
   .and(
-    z.union([
+    z.discriminatedUnion('frequencyType', [
       z.object({
         frequencyType: z.literal('daily'),
         days: z.array(z.string()),
       }),
       z.object({
         frequencyType: z.enum(['interval', 'weekly']),
-        frequencyValue: z.coerce.number(),
+        frequencyValue: z.coerce.number().positive(),
       }),
     ]),
   );
@@ -96,7 +96,7 @@ const AddHabit = ({ filter }: { filter?: string }) => {
     onSubmit: async ({ value }) => {
       const baseData = {
         name: value.name,
-        completionMode: value.completionMode[0],
+        completionMode: value.completionMode,
         goalValue: value.goalValue,
         unit: value.unit,
         createdAt: value.createdAt,
@@ -112,7 +112,7 @@ const AddHabit = ({ filter }: { filter?: string }) => {
         addHabit.mutate({
           ...baseData,
           frequencyType: value.frequencyType,
-          frequencyValue: value.frequencyValue,
+          frequencyValue: +value.frequencyValue,
         });
       }
     },
@@ -134,7 +134,13 @@ const AddHabit = ({ filter }: { filter?: string }) => {
         <DialogHeader>Add a habit</DialogHeader>
         <DialogBody>
           {' '}
-          <form>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              form.handleSubmit();
+            }}
+          >
             <form.Field
               name="name"
               children={(field) => {
@@ -171,7 +177,6 @@ const AddHabit = ({ filter }: { filter?: string }) => {
                     name={field.name}
                     value={[field.state.value]}
                     onValueChange={({ value }) => {
-                      console.log(frequencyTypeFormValue);
                       field.handleChange(
                         value[0] as 'interval' | 'weekly' | 'daily',
                       );
@@ -213,14 +218,7 @@ const AddHabit = ({ filter }: { filter?: string }) => {
             <form.Field
               name="goalValue"
               children={(field) => {
-                return (
-                  <FormInput
-                    form={form}
-                    label="Goal value"
-                    required
-                    field={field}
-                  />
-                );
+                return <FormInput label="Goal value" required field={field} />;
               }}
             />
             {frequencyTypeFormValue === 'daily' ? (
@@ -241,7 +239,7 @@ const AddHabit = ({ filter }: { filter?: string }) => {
                         <SelectValueText placeholder="Select days" />
                       </SelectTrigger>
                       <SelectContent portalRef={contentRef}>
-                        {frequencyType.items.map((frequencyType) => (
+                        {days.items.map((frequencyType) => (
                           <SelectItem
                             item={frequencyType}
                             key={frequencyType.value}
@@ -258,14 +256,8 @@ const AddHabit = ({ filter }: { filter?: string }) => {
               <form.Field
                 name="frequencyValue"
                 children={(field) => {
-                  console.log(field.state.value);
                   return (
-                    <FormInput
-                      form={form}
-                      label="Frequency value"
-                      required
-                      field={field}
-                    />
+                    <FormInput label="Frequency value" required field={field} />
                   );
                 }}
               />
