@@ -1,11 +1,18 @@
 import { Card, Heading, HStack, ProgressCircleRoot } from '@chakra-ui/react';
 
-import { FaCircleCheck } from 'react-icons/fa6';
+import { FaCircleCheck, FaEllipsis } from 'react-icons/fa6';
 import { ProgressCircleRing } from '../ui/progress-circle';
 
 import { ReceivedHabitType } from '@/queries/habit';
 import { useCompleteHabit } from '@/queries/hooks/habit';
-
+import {
+  MenuContent,
+  MenuItem,
+  MenuRoot,
+  MenuTrigger,
+} from '@/components/ui/menu';
+import EditHabit from './EditHabit';
+import DeleteHabit from './DeleteHabit';
 const getLastDays = () => {
   const daysList = [];
   const today = new Date();
@@ -127,6 +134,25 @@ const Habit = ({ habit, date }: { habit: ReceivedHabitType; date?: Date }) => {
                   )}
                 </ProgressCircleRoot>
               ))}
+
+              <MenuRoot>
+                <MenuTrigger asChild>
+                  <FaEllipsis />
+                </MenuTrigger>
+                <MenuContent>
+                  <MenuItem value="edit">
+                    <EditHabit habitId={habit.id} />
+                  </MenuItem>
+
+                  <MenuItem
+                    value="delete"
+                    color="fg.error"
+                    _hover={{ bg: 'bg.error', color: 'fg.error' }}
+                  >
+                    <DeleteHabit habitId={habit.id} />
+                  </MenuItem>
+                </MenuContent>
+              </MenuRoot>
             </HStack>
           )}
         </HStack>
