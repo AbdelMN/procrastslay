@@ -82,7 +82,7 @@ model HabitCompletion {
   habitId String
   count   Int
   date    DateTime
-  habit   Habit    @relation(references: [id], fields: [habitId])
+  habit   Habit    @relation(references: [id], fields: [habitId], onDelete: Cascade)
 
   @@unique(name: "habitId_date", [habitId, date])
 }
