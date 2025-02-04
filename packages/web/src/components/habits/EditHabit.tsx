@@ -21,11 +21,12 @@ import {
 } from '@chakra-ui/react';
 import { useForm, useStore } from '@tanstack/react-form';
 
-import { useRef } from 'react';
+import { forwardRef, useRef } from 'react';
 import { z } from 'zod';
 import { FormInput } from '../form/FormInput';
 import { useEditHabit } from '@/queries/hooks/habit';
 import { ReceivedHabitType } from '@/queries/habit';
+import DatePicker from 'react-datepicker';
 
 const HabitSchema = z
   .object({
@@ -53,7 +54,15 @@ type HabitType = z.infer<typeof HabitSchema>;
 const EditHabit = ({ habit }: { habit: ReceivedHabitType }) => {
   const contentRef = useRef<HTMLDivElement>(null);
   const editHabit = useEditHabit();
+  type CustomInputProps = React.HTMLProps<HTMLButtonElement>;
 
+  const CustomInput = forwardRef<HTMLButtonElement, CustomInputProps>(
+    ({ value, onClick, className }, ref) => (
+      <button type="button" className={className} onClick={onClick} ref={ref}>
+        {value}
+      </button>
+    ),
+  );
   const frequencyType = createListCollection({
     items: [
       { label: 'Interval', value: 'interval' },
@@ -254,7 +263,22 @@ const EditHabit = ({ habit }: { habit: ReceivedHabitType }) => {
                 }}
               />
             )}
-
+            <form.Field
+              name="createdAt"
+              children={(field) => {
+                return (
+                  <DatePicker
+                    selected={new Date(field.state.value)}
+                    onChange={(date) => {
+                      if (date) {
+                        field.handleChange(date.toISOString());
+                      }
+                    }}
+                    customInput={<CustomInput />}
+                  />
+                );
+              }}
+            />
             <form.Subscribe
               selector={(state) => [state.canSubmit, state.isSubmitting]}
               children={([canSubmit, isSubmitting]) => (
