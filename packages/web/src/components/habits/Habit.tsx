@@ -56,43 +56,63 @@ const Habit = ({ habit, date }: { habit: ReceivedHabitType; date?: Date }) => {
         <HStack justifyContent={'space-between'}>
           <Heading size="md"> {habit.name} </Heading>
           {date ? (
-            <ProgressCircleRoot
-              colorPalette={'gray'}
-              size={'sm'}
-              value={Math.min(
-                (completions[0].count * 100) / habit.goalValue,
-                100,
-              )}
-            >
-              {!Math.min(
-                (completions[0].count * 100) / habit.goalValue,
-                100,
-              ) ? (
-                <ProgressCircleRing
-                  borderRadius={'20px'}
-                  _hover={{ bg: 'gray.700' }}
-                  onClick={() => {
-                    completeHabit.mutate({
-                      habitId: habit.id,
-                      count: completions[0].count + 1,
-                      date: new Date(completions[0].date),
-                    });
-                  }}
-                />
-              ) : (
-                <FaCircleCheck
-                  color={'gray'}
-                  size={'32px'}
-                  onClick={() => {
-                    completeHabit.mutate({
-                      habitId: habit.id,
-                      count: 0,
-                      date: new Date(completions[0].date),
-                    });
-                  }}
-                />
-              )}
-            </ProgressCircleRoot>
+            <HStack>
+              <ProgressCircleRoot
+                colorPalette={'gray'}
+                size={'sm'}
+                value={Math.min(
+                  (completions[0].count * 100) / habit.goalValue,
+                  100,
+                )}
+              >
+                {!Math.min(
+                  (completions[0].count * 100) / habit.goalValue,
+                  100,
+                ) ? (
+                  <ProgressCircleRing
+                    borderRadius={'20px'}
+                    _hover={{ bg: 'gray.700' }}
+                    onClick={() => {
+                      completeHabit.mutate({
+                        habitId: habit.id,
+                        count: completions[0].count + 1,
+                        date: new Date(completions[0].date),
+                      });
+                    }}
+                  />
+                ) : (
+                  <FaCircleCheck
+                    color={'gray'}
+                    size={'32px'}
+                    onClick={() => {
+                      completeHabit.mutate({
+                        habitId: habit.id,
+                        count: 0,
+                        date: new Date(completions[0].date),
+                      });
+                    }}
+                  />
+                )}
+              </ProgressCircleRoot>
+              <MenuRoot>
+                <MenuTrigger asChild>
+                  <FaEllipsis />
+                </MenuTrigger>
+                <MenuContent>
+                  <MenuItem value="edit">
+                    <EditHabit habit={habit} />
+                  </MenuItem>
+
+                  <MenuItem
+                    value="delete"
+                    color="fg.error"
+                    _hover={{ bg: 'bg.error', color: 'fg.error' }}
+                  >
+                    <DeleteHabit habitId={habit.id} />
+                  </MenuItem>
+                </MenuContent>
+              </MenuRoot>
+            </HStack>
           ) : (
             <HStack>
               {completions.map((completion) => (
@@ -141,7 +161,7 @@ const Habit = ({ habit, date }: { habit: ReceivedHabitType; date?: Date }) => {
                 </MenuTrigger>
                 <MenuContent>
                   <MenuItem value="edit">
-                    <EditHabit habitId={habit.id} />
+                    <EditHabit habit={habit} />
                   </MenuItem>
 
                   <MenuItem

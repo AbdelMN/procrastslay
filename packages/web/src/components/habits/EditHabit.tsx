@@ -13,13 +13,19 @@ import {
   SelectValueText,
 } from '@/components/ui/select';
 
-import { Button, createListCollection, Input } from '@chakra-ui/react';
+import {
+  Button,
+  createListCollection,
+  DialogActionTrigger,
+  Input,
+} from '@chakra-ui/react';
 import { useForm, useStore } from '@tanstack/react-form';
 
 import { useRef } from 'react';
 import { z } from 'zod';
 import { FormInput } from '../form/FormInput';
 import { useEditHabit } from '@/queries/hooks/habit';
+import { ReceivedHabitType } from '@/queries/habit';
 
 const HabitSchema = z
   .object({
@@ -44,7 +50,7 @@ const HabitSchema = z
   );
 type HabitType = z.infer<typeof HabitSchema>;
 
-const EditHabit = ({ habitId }: { habitId: string }) => {
+const EditHabit = ({ habit }: { habit: ReceivedHabitType }) => {
   const contentRef = useRef<HTMLDivElement>(null);
   const editHabit = useEditHabit();
 
@@ -71,12 +77,7 @@ const EditHabit = ({ habitId }: { habitId: string }) => {
 
   const form = useForm({
     defaultValues: {
-      name: 'Drink water',
-      completionMode: 'One Time',
-      goalValue: 1,
-      unit: 'cups',
-      createdAt: new Date().toISOString(),
-      frequencyType: 'interval',
+      ...habit,
     } as HabitType,
 
     validators: {
@@ -85,7 +86,7 @@ const EditHabit = ({ habitId }: { habitId: string }) => {
 
     onSubmit: async ({ value }) => {
       const baseData = {
-        id: habitId,
+        id: habit.id,
         name: value.name,
         completionMode: value.completionMode,
         goalValue: value.goalValue,
@@ -253,15 +254,18 @@ const EditHabit = ({ habitId }: { habitId: string }) => {
                 }}
               />
             )}
+
             <form.Subscribe
               selector={(state) => [state.canSubmit, state.isSubmitting]}
               children={([canSubmit, isSubmitting]) => (
-                <Button type="submit" disabled={!canSubmit}>
-                  {isSubmitting ? '...' : 'Submit'}
-                </Button>
+                <DialogActionTrigger asChild>
+                  <Button type="submit" disabled={!canSubmit}>
+                    {isSubmitting ? '...' : 'Submit'}
+                  </Button>
+                </DialogActionTrigger>
               )}
             />
-          </form>{' '}
+          </form>
         </DialogBody>
       </DialogContent>
     </DialogRoot>
