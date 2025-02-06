@@ -22,34 +22,12 @@ import {
 import { useForm, useStore } from '@tanstack/react-form';
 
 import { forwardRef, useRef } from 'react';
-import { z } from 'zod';
+
 import { FormInput } from '../form/FormInput';
 import { useEditHabit } from '@/queries/hooks/habit';
 import { ReceivedHabitType } from '@/queries/habit';
 import DatePicker from 'react-datepicker';
-
-const HabitSchema = z
-  .object({
-    name: z.string(),
-    completionMode: z.string(),
-    goalValue: z.coerce.number().positive(),
-    unit: z.string().optional(),
-    createdAt: z.string(),
-    frequencyType: z.enum(['interval', 'weekly', 'daily']),
-  })
-  .and(
-    z.discriminatedUnion('frequencyType', [
-      z.object({
-        frequencyType: z.literal('daily'),
-        days: z.array(z.string()),
-      }),
-      z.object({
-        frequencyType: z.enum(['interval', 'weekly']),
-        frequencyValue: z.coerce.number().positive(),
-      }),
-    ]),
-  );
-type HabitType = z.infer<typeof HabitSchema>;
+import { HabitSchema, HabitType } from './HabitSchema';
 
 const EditHabit = ({ habit }: { habit: ReceivedHabitType }) => {
   const contentRef = useRef<HTMLDivElement>(null);
