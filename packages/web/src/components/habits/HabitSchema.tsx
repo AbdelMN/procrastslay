@@ -13,7 +13,7 @@ export const HabitSchema = z
     z.discriminatedUnion('frequencyType', [
       z.object({
         frequencyType: z.literal('daily'),
-        days: z.array(z.string()),
+        days: z.array(z.enum(['mo', 'tu', 'we', 'th', 'sa', 'su'])),
       }),
       z.object({
         frequencyType: z.enum(['interval', 'weekly']),

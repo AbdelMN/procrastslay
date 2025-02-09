@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/select';
 import { postHabit } from '@/queries/habit';
 import { Button, createListCollection, Input } from '@chakra-ui/react';
-import { useForm, useStore } from '@tanstack/react-form';
+import { useForm } from '@tanstack/react-form';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRef } from 'react';
 
@@ -37,11 +37,11 @@ const AddHabit = ({ filter }: { filter?: string }) => {
   const frequencyType = createListCollection({
     items: [
       { label: 'Interval', value: 'interval' },
-      { label: 'Weekly', value: 'weekly' },
       {
         label: 'Daily',
         value: 'daily',
       },
+      { label: 'Weekly', value: 'weekly' },
     ],
   });
   const days = createListCollection({
@@ -65,7 +65,7 @@ const AddHabit = ({ filter }: { filter?: string }) => {
         ? new Date(filter).toISOString()
         : new Date().toISOString(),
 
-      frequencyType: 'interval',
+      frequencyType: 'daily',
     } as HabitType,
     validators: {
       onChange: HabitSchema,
@@ -95,11 +95,6 @@ const AddHabit = ({ filter }: { filter?: string }) => {
       }
     },
   });
-
-  const frequencyTypeFormValue = useStore(
-    form.store,
-    (state) => state.values.frequencyType,
-  );
 
   return (
     <DialogRoot>
@@ -158,6 +153,11 @@ const AddHabit = ({ filter }: { filter?: string }) => {
                       field.handleChange(
                         value[0] as 'interval' | 'weekly' | 'daily',
                       );
+                      if (value[0] === 'daily') {
+                        form.deleteField('frequencyValue');
+                      } else {
+                        form.deleteField('days');
+                      }
                     }}
                     collection={frequencyType}
                     width="100px"
@@ -199,54 +199,89 @@ const AddHabit = ({ filter }: { filter?: string }) => {
                 return <FormInput label="Goal value" required field={field} />;
               }}
             />
-            {frequencyTypeFormValue === 'daily' ? (
-              <form.Field
-                name="days"
-                children={(field) => {
-                  return (
-                    <SelectRoot
-                      name={field.name}
-                      value={field.state.value as string[]}
-                      onValueChange={({ value }) => {
-                        field.handleChange(value);
-                      }}
-                      collection={days}
-                      width="100px"
-                    >
-                      <SelectTrigger>
-                        <SelectValueText placeholder="Select days" />
-                      </SelectTrigger>
-                      <SelectContent portalRef={contentRef}>
-                        {days.items.map((frequencyType) => (
-                          <SelectItem
-                            item={frequencyType}
-                            key={frequencyType.value}
-                          >
-                            {frequencyType.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </SelectRoot>
-                  );
-                }}
-              />
-            ) : (
-              <form.Field
-                name="frequencyValue"
-                children={(field) => {
-                  return (
-                    <FormInput label="Frequency value" required field={field} />
-                  );
-                }}
-              />
-            )}
+
             <form.Subscribe
-              selector={(state) => [state.canSubmit, state.isSubmitting]}
-              children={([canSubmit, isSubmitting]) => (
-                <Button type="submit" disabled={!canSubmit}>
-                  {isSubmitting ? '...' : 'Submit'}
-                </Button>
-              )}
+              selector={(state) => [state.values.frequencyType]}
+              children={(frequencyType) => {
+                console.log(frequencyType);
+                if (frequencyType[0] === 'daily') {
+                  return (
+                    <form.Field
+                      name="days"
+                      children={(field) => {
+                        console.log(field.name);
+                        return (
+                          <SelectRoot
+                            name={field.name}
+                            value={field.state.value as string[]}
+                            onValueChange={({ value }) => {
+                              field.handleChange(value);
+                            }}
+                            collection={days}
+                            width="100px"
+                          >
+                            <SelectTrigger>
+                              <SelectValueText placeholder="Select days" />
+                            </SelectTrigger>
+                            <SelectContent portalRef={contentRef}>
+                              {days.items.map((frequencyType) => (
+                                <SelectItem
+                                  item={frequencyType}
+                                  key={frequencyType.value}
+                                >
+                                  {frequencyType.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </SelectRoot>
+                        );
+                      }}
+                    />
+                  );
+                }
+              }}
+            />
+
+            <form.Subscribe
+              selector={(state) => [state.values.frequencyType]}
+              children={(frequencyType) => {
+                console.log(frequencyType);
+                if (
+                  frequencyType[0] === 'weekly' ||
+                  frequencyType[0] === 'interval'
+                ) {
+                  return (
+                    <form.Field
+                      name="frequencyValue"
+                      children={(field) => {
+                        console.log(field.name);
+                        return (
+                          <FormInput
+                            label="Frequency value"
+                            required
+                            field={field}
+                          />
+                        );
+                      }}
+                    />
+                  );
+                }
+              }}
+            />
+            <form.Subscribe
+              selector={(state) => [
+                state.canSubmit,
+                state.isSubmitting,
+                state.values,
+              ]}
+              children={([canSubmit, isSubmitting, values]) => {
+                console.log(values);
+                return (
+                  <Button type="submit" disabled={!canSubmit}>
+                    {isSubmitting ? '...' : 'Submit'}
+                  </Button>
+                );
+              }}
             />
           </form>{' '}
         </DialogBody>
