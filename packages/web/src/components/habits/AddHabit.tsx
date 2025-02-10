@@ -7,7 +7,7 @@ import {
 } from '@/components/ui/dialog';
 
 import { postHabit } from '@/queries/habit';
-import { Button, createListCollection, HStack } from '@chakra-ui/react';
+import { Button, HStack } from '@chakra-ui/react';
 import { useForm } from '@tanstack/react-form';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRef } from 'react';
@@ -16,6 +16,7 @@ import { FormInput } from '../form/FormInput';
 import { HabitSchema, HabitType } from './HabitSchema';
 import FormSelect from '../form/FormSelect';
 import FormDate from '../form/FormDate';
+import { DaysCollection, FrequencyTypeCollection } from './habitcollections';
 
 const AddHabit = ({ filter }: { filter?: string }) => {
   const queryClient = useQueryClient();
@@ -30,27 +31,8 @@ const AddHabit = ({ filter }: { filter?: string }) => {
     },
   });
 
-  const frequencyType = createListCollection({
-    items: [
-      { label: 'Interval', value: 'interval' },
-      {
-        label: 'Daily',
-        value: 'daily',
-      },
-      { label: 'Weekly', value: 'weekly' },
-    ],
-  });
-
-  const days = createListCollection({
-    items: [
-      { label: 'Monday', value: 'Mon' },
-      { label: 'Tuesday', value: 'Tue' },
-      { label: 'Wednsday', value: 'Wed' },
-      { label: 'Thursday', value: 'Thu' },
-      { label: 'Saturday', value: 'Sat' },
-      { label: 'Sunday', value: 'Sun' },
-    ],
-  });
+  const frequencyType = FrequencyTypeCollection;
+  const days = DaysCollection;
 
   const form = useForm({
     defaultValues: {

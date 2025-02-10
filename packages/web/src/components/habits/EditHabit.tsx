@@ -6,7 +6,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 
-import { Box, Button, createListCollection, HStack } from '@chakra-ui/react';
+import { Box, Button, HStack } from '@chakra-ui/react';
 
 import { useRef } from 'react';
 
@@ -18,31 +18,14 @@ import { HabitSchema, HabitType } from './HabitSchema';
 import FormSelect from '../form/FormSelect';
 import { useForm } from '@tanstack/react-form';
 import FormDate from '../form/FormDate';
+import { DaysCollection, FrequencyTypeCollection } from './habitcollections';
 
 const EditHabit = ({ habit }: { habit: ReceivedHabitType }) => {
   const contentRef = useRef<HTMLDivElement>(null);
   const editHabit = useEditHabit();
 
-  const frequencyType = createListCollection({
-    items: [
-      { label: 'Interval', value: 'interval' },
-      { label: 'Weekly', value: 'weekly' },
-      {
-        label: 'Daily',
-        value: 'daily',
-      },
-    ],
-  });
-  const days = createListCollection({
-    items: [
-      { label: 'Monday', value: 'mo' },
-      { label: 'Tuesday', value: 'tu' },
-      { label: 'Wednsday', value: 'we' },
-      { label: 'Thursday', value: 'th' },
-      { label: 'Saturday', value: 'sa' },
-      { label: 'Sunday', value: 'su' },
-    ],
-  });
+  const frequencyType = FrequencyTypeCollection;
+  const days = DaysCollection;
 
   const form = useForm({
     defaultValues: {
