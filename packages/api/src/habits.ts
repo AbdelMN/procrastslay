@@ -99,7 +99,7 @@ const isHabitinDate = (habit, date: Date) => {
     }
 
     case 'daily': {
-      const localDate = date.toLocaleDateString('en-EN', { weekday: 'long' });
+      const localDate = date.toLocaleDateString('en-EN', { weekday: 'short' });
 
       return habit.days.includes(localDate);
     }
