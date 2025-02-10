@@ -5,42 +5,24 @@ import {
   DialogRoot,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import {
-  SelectContent,
-  SelectItem,
-  SelectRoot,
-  SelectTrigger,
-  SelectValueText,
-} from '@/components/ui/select';
 
-import {
-  Button,
-  createListCollection,
-  DialogActionTrigger,
-  Input,
-} from '@chakra-ui/react';
-import { useForm, useStore } from '@tanstack/react-form';
+import { Box, Button, createListCollection, HStack } from '@chakra-ui/react';
 
-import { forwardRef, useRef } from 'react';
+import { useRef } from 'react';
 
 import { FormInput } from '../form/FormInput';
 import { useEditHabit } from '@/queries/hooks/habit';
 import { ReceivedHabitType } from '@/queries/habit';
-import DatePicker from 'react-datepicker';
+
 import { HabitSchema, HabitType } from './HabitSchema';
+import FormSelect from '../form/FormSelect';
+import { useForm } from '@tanstack/react-form';
+import FormDate from '../form/FormDate';
 
 const EditHabit = ({ habit }: { habit: ReceivedHabitType }) => {
   const contentRef = useRef<HTMLDivElement>(null);
   const editHabit = useEditHabit();
-  type CustomInputProps = React.HTMLProps<HTMLButtonElement>;
 
-  const CustomInput = forwardRef<HTMLButtonElement, CustomInputProps>(
-    ({ value, onClick, className }, ref) => (
-      <button type="button" className={className} onClick={onClick} ref={ref}>
-        {value}
-      </button>
-    ),
-  );
   const frequencyType = createListCollection({
     items: [
       { label: 'Interval', value: 'interval' },
@@ -96,17 +78,10 @@ const EditHabit = ({ habit }: { habit: ReceivedHabitType }) => {
     },
   });
 
-  const frequencyTypeFormValue = useStore(
-    form.store,
-    (state) => state.values.frequencyType,
-  );
-
   return (
     <DialogRoot>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm">
-          Edit habit
-        </Button>
+        <Box width={'100%'}>Edit</Box>
       </DialogTrigger>
       <DialogContent ref={contentRef}>
         <DialogHeader>Add a habit</DialogHeader>
@@ -122,136 +97,128 @@ const EditHabit = ({ habit }: { habit: ReceivedHabitType }) => {
             <form.Field
               name="name"
               children={(field) => {
-                return (
-                  <Input
-                    id={field.name}
-                    name={field.name}
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                  ></Input>
-                );
+                return <FormInput label="Habit name" required field={field} />;
               }}
             />
-
             <form.Field
               name="frequencyType"
               children={(field) => {
                 return (
-                  <SelectRoot
-                    name={field.name}
-                    value={[field.state.value]}
-                    onValueChange={({ value }) => {
+                  <FormSelect
+                    valueChangeFn={({ value }) => {
                       field.handleChange(
                         value[0] as 'interval' | 'weekly' | 'daily',
                       );
-                    }}
-                    collection={frequencyType}
-                    width="100px"
-                  >
-                    <SelectTrigger>
-                      <SelectValueText placeholder="Select frequency Type" />
-                    </SelectTrigger>
-                    <SelectContent portalRef={contentRef}>
-                      {frequencyType.items.map((frequencyType) => (
-                        <SelectItem
-                          item={frequencyType}
-                          key={frequencyType.value}
-                        >
-                          {frequencyType.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </SelectRoot>
-                );
-              }}
-            />
-            <form.Field
-              name="unit"
-              children={(field) => {
-                return (
-                  <Input
-                    id={field.name}
-                    name={field.name}
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                  ></Input>
-                );
-              }}
-            />
-            <form.Field
-              name="goalValue"
-              children={(field) => {
-                return <FormInput label="Goal value" required field={field} />;
-              }}
-            />
-            {frequencyTypeFormValue === 'daily' ? (
-              <form.Field
-                name="days"
-                children={(field) => {
-                  return (
-                    <SelectRoot
-                      name={field.name}
-                      value={field.state.value as string[]}
-                      onValueChange={({ value }) => {
-                        field.handleChange(value);
-                      }}
-                      collection={days}
-                      width="100px"
-                    >
-                      <SelectTrigger>
-                        <SelectValueText placeholder="Select days" />
-                      </SelectTrigger>
-                      <SelectContent portalRef={contentRef}>
-                        {days.items.map((frequencyType) => (
-                          <SelectItem
-                            item={frequencyType}
-                            key={frequencyType.value}
-                          >
-                            {frequencyType.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </SelectRoot>
-                  );
-                }}
-              />
-            ) : (
-              <form.Field
-                name="frequencyValue"
-                children={(field) => {
-                  return (
-                    <FormInput label="Frequency value" required field={field} />
-                  );
-                }}
-              />
-            )}
-            <form.Field
-              name="createdAt"
-              children={(field) => {
-                return (
-                  <DatePicker
-                    selected={new Date(field.state.value)}
-                    onChange={(date) => {
-                      if (date) {
-                        field.handleChange(date.toISOString());
+                      if (value[0] === 'daily') {
+                        form.deleteField('frequencyValue');
+                      } else {
+                        form.deleteField('days');
                       }
                     }}
-                    customInput={<CustomInput />}
+                    field={field}
+                    contentRef={contentRef}
+                    required
+                    label="Frequency Type"
+                    collection={frequencyType}
                   />
                 );
               }}
             />
+
+            <HStack>
+              <form.Field
+                name="goalValue"
+                children={(field) => {
+                  return (
+                    <FormInput label="Goal value" required field={field} />
+                  );
+                }}
+              />
+
+              <form.Field
+                name="unit"
+                children={(field) => {
+                  return <FormInput label="Unit" required field={field} />;
+                }}
+              />
+            </HStack>
+
             <form.Subscribe
-              selector={(state) => [state.canSubmit, state.isSubmitting]}
-              children={([canSubmit, isSubmitting]) => (
-                <DialogActionTrigger asChild>
+              selector={(state) => [state.values.frequencyType]}
+              children={(frequencyType) => {
+                console.log(frequencyType);
+                if (frequencyType[0] === 'daily') {
+                  return (
+                    <form.Field
+                      name="days"
+                      children={(field) => {
+                        return (
+                          <FormSelect
+                            valueChangeFn={({ value }) => {
+                              field.handleChange(value);
+                            }}
+                            field={field}
+                            contentRef={contentRef}
+                            required
+                            label="Days"
+                            collection={days}
+                          />
+                        );
+                      }}
+                    />
+                  );
+                }
+              }}
+            />
+
+            <form.Subscribe
+              selector={(state) => [state.values.frequencyType]}
+              children={(frequencyType) => {
+                console.log(frequencyType);
+                if (
+                  frequencyType[0] === 'weekly' ||
+                  frequencyType[0] === 'interval'
+                ) {
+                  return (
+                    <form.Field
+                      name="frequencyValue"
+                      children={(field) => {
+                        console.log(field.name);
+                        return (
+                          <FormInput
+                            label="Frequency value"
+                            required
+                            field={field}
+                          />
+                        );
+                      }}
+                    />
+                  );
+                }
+              }}
+            />
+
+            <form.Field
+              name="createdAt"
+              children={(field) => {
+                return <FormDate field={field} required label="Start date" />;
+              }}
+            />
+
+            <form.Subscribe
+              selector={(state) => [
+                state.canSubmit,
+                state.isSubmitting,
+                state.values,
+              ]}
+              children={([canSubmit, isSubmitting, values]) => {
+                console.log(values);
+                return (
                   <Button type="submit" disabled={!canSubmit}>
                     {isSubmitting ? '...' : 'Submit'}
                   </Button>
-                </DialogActionTrigger>
-              )}
+                );
+              }}
             />
           </form>
         </DialogBody>
