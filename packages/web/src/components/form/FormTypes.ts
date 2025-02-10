@@ -1,3 +1,4 @@
+import { ListCollection, SelectValueChangeDetails } from '@chakra-ui/react';
 import { FieldApi } from '@tanstack/react-form';
 
 export type FormFieldProps = {
@@ -7,4 +8,10 @@ export type FormFieldProps = {
   required?: boolean;
   helperText?: string;
   placeholder?: string;
+};
+
+export type FormSelectFieldProps = FormFieldProps & {
+  collection: ListCollection;
+  contentRef: React.RefObject<HTMLElement> | undefined;
+  valueChangeFn: (details: SelectValueChangeDetails) => void;
 };

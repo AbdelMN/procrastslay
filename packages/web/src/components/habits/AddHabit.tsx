@@ -5,21 +5,16 @@ import {
   DialogRoot,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import {
-  SelectContent,
-  SelectItem,
-  SelectRoot,
-  SelectTrigger,
-  SelectValueText,
-} from '@/components/ui/select';
+
 import { postHabit } from '@/queries/habit';
-import { Button, createListCollection, Input } from '@chakra-ui/react';
+import { Button, createListCollection, HStack } from '@chakra-ui/react';
 import { useForm } from '@tanstack/react-form';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRef } from 'react';
 
 import { FormInput } from '../form/FormInput';
 import { HabitSchema, HabitType } from './HabitSchema';
+import FormSelect from '../form/FormSelect';
 
 const AddHabit = ({ filter }: { filter?: string }) => {
   const queryClient = useQueryClient();
@@ -44,6 +39,7 @@ const AddHabit = ({ filter }: { filter?: string }) => {
       { label: 'Weekly', value: 'weekly' },
     ],
   });
+
   const days = createListCollection({
     items: [
       { label: 'Monday', value: 'mo' },
@@ -115,26 +111,15 @@ const AddHabit = ({ filter }: { filter?: string }) => {
             <form.Field
               name="name"
               children={(field) => {
-                return (
-                  <Input
-                    id={field.name}
-                    name={field.name}
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                  ></Input>
-                );
+                return <FormInput label="Habit name" required field={field} />;
               }}
             />
-
             <form.Field
               name="frequencyType"
               children={(field) => {
                 return (
-                  <SelectRoot
-                    name={field.name}
-                    value={[field.state.value]}
-                    onValueChange={({ value }) => {
+                  <FormSelect
+                    valueChangeFn={({ value }) => {
                       field.handleChange(
                         value[0] as 'interval' | 'weekly' | 'daily',
                       );
@@ -144,46 +129,33 @@ const AddHabit = ({ filter }: { filter?: string }) => {
                         form.deleteField('days');
                       }
                     }}
+                    field={field}
+                    contentRef={contentRef}
+                    required
+                    label="Frequency Type"
                     collection={frequencyType}
-                    width="100px"
-                  >
-                    <SelectTrigger>
-                      <SelectValueText placeholder="Select frequency Type" />
-                    </SelectTrigger>
-                    <SelectContent portalRef={contentRef}>
-                      {frequencyType.items.map((frequencyType) => (
-                        <SelectItem
-                          item={frequencyType}
-                          key={frequencyType.value}
-                        >
-                          {frequencyType.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </SelectRoot>
+                  />
                 );
               }}
             />
-            <form.Field
-              name="unit"
-              children={(field) => {
-                return (
-                  <Input
-                    id={field.name}
-                    name={field.name}
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                  ></Input>
-                );
-              }}
-            />
-            <form.Field
-              name="goalValue"
-              children={(field) => {
-                return <FormInput label="Goal value" required field={field} />;
-              }}
-            />
+
+            <HStack>
+              <form.Field
+                name="goalValue"
+                children={(field) => {
+                  return (
+                    <FormInput label="Goal value" required field={field} />
+                  );
+                }}
+              />
+
+              <form.Field
+                name="unit"
+                children={(field) => {
+                  return <FormInput label="Unit" required field={field} />;
+                }}
+              />
+            </HStack>
 
             <form.Subscribe
               selector={(state) => [state.values.frequencyType]}
@@ -194,31 +166,17 @@ const AddHabit = ({ filter }: { filter?: string }) => {
                     <form.Field
                       name="days"
                       children={(field) => {
-                        console.log(field.name);
                         return (
-                          <SelectRoot
-                            name={field.name}
-                            value={field.state.value as string[]}
-                            onValueChange={({ value }) => {
+                          <FormSelect
+                            valueChangeFn={({ value }) => {
                               field.handleChange(value);
                             }}
+                            field={field}
+                            contentRef={contentRef}
+                            required
+                            label="Days"
                             collection={days}
-                            width="100px"
-                          >
-                            <SelectTrigger>
-                              <SelectValueText placeholder="Select days" />
-                            </SelectTrigger>
-                            <SelectContent portalRef={contentRef}>
-                              {days.items.map((frequencyType) => (
-                                <SelectItem
-                                  item={frequencyType}
-                                  key={frequencyType.value}
-                                >
-                                  {frequencyType.label}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </SelectRoot>
+                          />
                         );
                       }}
                     />
@@ -253,6 +211,7 @@ const AddHabit = ({ filter }: { filter?: string }) => {
                 }
               }}
             />
+
             <form.Subscribe
               selector={(state) => [
                 state.canSubmit,
