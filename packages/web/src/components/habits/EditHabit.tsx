@@ -75,7 +75,6 @@ const EditHabit = ({ habit }: { habit: ReceivedHabitType }) => {
       const baseData = {
         id: habit.id,
         name: value.name,
-        completionMode: value.completionMode,
         goalValue: value.goalValue,
         unit: value.unit,
         createdAt: value.createdAt,
@@ -134,20 +133,7 @@ const EditHabit = ({ habit }: { habit: ReceivedHabitType }) => {
                 );
               }}
             />
-            <form.Field
-              name="completionMode"
-              children={(field) => {
-                return (
-                  <Input
-                    id={field.name}
-                    name={field.name}
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                  ></Input>
-                );
-              }}
-            />
+
             <form.Field
               name="frequencyType"
               children={(field) => {

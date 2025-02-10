@@ -3,7 +3,6 @@ import ky from 'ky';
 
 export type HabitType = {
   name: string;
-  completionMode: string;
   goalValue: number;
   unit?: string;
   createdAt: string;

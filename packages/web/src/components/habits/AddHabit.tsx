@@ -58,7 +58,6 @@ const AddHabit = ({ filter }: { filter?: string }) => {
   const form = useForm({
     defaultValues: {
       name: 'Drink water',
-      completionMode: 'One Time',
       goalValue: 1,
       unit: 'cups',
       createdAt: filter
@@ -74,7 +73,6 @@ const AddHabit = ({ filter }: { filter?: string }) => {
     onSubmit: async ({ value }) => {
       const baseData = {
         name: value.name,
-        completionMode: value.completionMode,
         goalValue: value.goalValue,
         unit: value.unit,
         createdAt: value.createdAt,
@@ -128,20 +126,7 @@ const AddHabit = ({ filter }: { filter?: string }) => {
                 );
               }}
             />
-            <form.Field
-              name="completionMode"
-              children={(field) => {
-                return (
-                  <Input
-                    id={field.name}
-                    name={field.name}
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                  ></Input>
-                );
-              }}
-            />
+
             <form.Field
               name="frequencyType"
               children={(field) => {
