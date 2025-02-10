@@ -45,6 +45,7 @@ const HabitList = () => {
   }
   return (
     <Box>
+      <AddHabit />
       <VStack>
         {data.map((habit) => (
           <Habit key={habit.id} habit={habit} />
