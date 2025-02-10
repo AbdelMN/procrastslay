@@ -9,7 +9,6 @@ const app = new Hono();
 const HabitSchema = z
   .object({
     name: z.string(),
-    completionMode: z.string(),
     goalValue: z.number(),
     unit: z.string().optional(),
     createdAt: z.string(),
@@ -46,15 +45,14 @@ app.post('/', zValidator('json', HabitSchema), sessionMiddleware, async (c) => {
 
   if (user) {
     const userId = user.id;
-    const { name, completionMode, goalValue, unit, createdAt, frequencyType } =
-      receivedHabit;
-    console.log(receivedHabit);
+    const { name, goalValue, unit, createdAt, frequencyType } = receivedHabit;
+
     if (frequencyType === 'interval' || frequencyType === 'weekly') {
       const { frequencyValue } = receivedHabit;
       const habit = await prisma.habit.create({
         data: {
           name,
-          completionMode,
+
           goalValue,
           unit,
           userId,
@@ -72,7 +70,7 @@ app.post('/', zValidator('json', HabitSchema), sessionMiddleware, async (c) => {
       const habit = await prisma.habit.create({
         data: {
           name,
-          completionMode,
+
           goalValue,
           unit,
           userId,
@@ -175,6 +173,7 @@ app.post(
     const completedHabit = c.req.valid('json');
     const user = c.get('user');
     const { habitId, count, date } = completedHabit;
+
     if (user) {
       const userId = user.id;
 
@@ -202,6 +201,7 @@ app.post(
 app.post('/delete', sessionMiddleware, async (c) => {
   const body = await c.req.json();
   const user = c.get('user');
+
   if (user) {
     const id = body.id;
     const userId = user.id;
@@ -212,29 +212,24 @@ app.post('/delete', sessionMiddleware, async (c) => {
         userId: user.id,
       },
     });
+
     return c.json(habit);
   }
 });
 
 app.patch(
   '/:id',
+
   zValidator('json', HabitSchema),
   sessionMiddleware,
+
   async (c) => {
     const { id } = c.req.param();
-
     const user = c.get('user');
 
     if (user) {
       const receivedHabit = c.req.valid('json');
-      const {
-        name,
-        completionMode,
-        goalValue,
-        unit,
-        createdAt,
-        frequencyType,
-      } = receivedHabit;
+      const { name, goalValue, unit, createdAt, frequencyType } = receivedHabit;
       const userId = user.id;
       if (frequencyType === 'interval' || frequencyType === 'weekly') {
         const { frequencyValue } = receivedHabit;
@@ -242,7 +237,6 @@ app.patch(
           where: { id: id, userId: user.id },
           data: {
             name,
-            completionMode,
             goalValue,
             unit,
             userId,
@@ -255,13 +249,13 @@ app.patch(
 
         return c.json(habit);
       }
+
       if (frequencyType === 'daily') {
         const { days } = receivedHabit;
         const habit = await prisma.habit.update({
           where: { id: id, userId: user.id },
           data: {
             name,
-            completionMode,
             goalValue,
             unit,
             userId,
@@ -270,10 +264,13 @@ app.patch(
             days,
           },
         });
+
         return c.json(habit);
       }
+
       return c.text('Invalid data', 400);
     }
   },
 );
+
 export default app;
