@@ -15,6 +15,7 @@ import { useRef } from 'react';
 import { FormInput } from '../form/FormInput';
 import { HabitSchema, HabitType } from './HabitSchema';
 import FormSelect from '../form/FormSelect';
+import FormDate from '../form/FormDate';
 
 const AddHabit = ({ filter }: { filter?: string }) => {
   const queryClient = useQueryClient();
@@ -42,12 +43,12 @@ const AddHabit = ({ filter }: { filter?: string }) => {
 
   const days = createListCollection({
     items: [
-      { label: 'Monday', value: 'mo' },
-      { label: 'Tuesday', value: 'tu' },
-      { label: 'Wednsday', value: 'we' },
-      { label: 'Thursday', value: 'th' },
-      { label: 'Saturday', value: 'sa' },
-      { label: 'Sunday', value: 'su' },
+      { label: 'Monday', value: 'Mon' },
+      { label: 'Tuesday', value: 'Tue' },
+      { label: 'Wednsday', value: 'Wed' },
+      { label: 'Thursday', value: 'Thu' },
+      { label: 'Saturday', value: 'Sat' },
+      { label: 'Sunday', value: 'Sun' },
     ],
   });
 
@@ -211,7 +212,12 @@ const AddHabit = ({ filter }: { filter?: string }) => {
                 }
               }}
             />
-
+            <form.Field
+              name="createdAt"
+              children={(field) => {
+                return <FormDate field={field} required label="Start date" />;
+              }}
+            />
             <form.Subscribe
               selector={(state) => [
                 state.canSubmit,
