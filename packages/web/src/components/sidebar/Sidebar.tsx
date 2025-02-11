@@ -6,6 +6,7 @@ const SidebarMenu = () => (
   <VStack>
     <Button
       w="100%"
+      color={'white'}
       bg={'transparent'}
       _hover={{ bg: 'gray.700' }}
       justifyContent={'left'}
@@ -14,6 +15,7 @@ const SidebarMenu = () => (
     </Button>
     <Button
       w="100%"
+      color={'white'}
       bg={'transparent'}
       _hover={{ bg: 'gray.700' }}
       justifyContent={'left'}
@@ -23,6 +25,7 @@ const SidebarMenu = () => (
     </Button>
     <Button
       w="100%"
+      color={'white'}
       bg={'transparent'}
       _hover={{ bg: 'gray.700' }}
       justifyContent={'left'}
@@ -44,10 +47,10 @@ const Sidebar = () => {
       w="200px"
       top={0}
       h="100vh"
-      bg="#dfdfdf"
+      bg="gray.900"
     >
       <SidebarMenu />
-      <Separator />
+      <Separator color={'black'} />
       <TaskListNav />
     </Box>
   );

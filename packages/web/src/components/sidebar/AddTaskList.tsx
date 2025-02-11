@@ -48,6 +48,7 @@ const AddTaskList = ({ refetch }: { refetch: () => void }) => {
     >
       <DialogTrigger asChild>
         <FaCirclePlus
+          color="#d4d4d8"
           onClick={(event) => {
             event.stopPropagation();
           }}

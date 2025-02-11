@@ -34,7 +34,7 @@ function AuthLayout() {
   return (
     <Flex>
       <Sidebar />
-      <Box width={'100%'}>
+      <Box bgColor={'gray.950'} width={'100%'}>
         <Outlet />
       </Box>
     </Flex>

@@ -1,4 +1,11 @@
-import { Flex, Box, Button, Collapsible, Spinner } from '@chakra-ui/react';
+import {
+  Flex,
+  Box,
+  Button,
+  Collapsible,
+  Spinner,
+  HStack,
+} from '@chakra-ui/react';
 import { FaChevronRight, FaChevronDown, FaEllipsis } from 'react-icons/fa6';
 import { useState } from 'react';
 
@@ -33,11 +40,17 @@ const TaskListNav = () => {
       }}
     >
       <Collapsible.Trigger paddingY="3">
-        <Flex align="center">
-          {isOpen ? <FaChevronDown /> : <FaChevronRight />}
-          <Box ml="2">Task List</Box>
+        <HStack>
+          {isOpen ? (
+            <FaChevronDown color="#d4d4d8" />
+          ) : (
+            <FaChevronRight color="#d4d4d8" />
+          )}
+          <Box ml="2 " color={'gray.300'}>
+            Task List
+          </Box>
           <AddTaskList refetch={refetch} />
-        </Flex>
+        </HStack>
       </Collapsible.Trigger>
       <Collapsible.Content>
         <Flex direction={'column'}>
@@ -56,7 +69,7 @@ const TaskListNav = () => {
               justifyContent={'space-between'}
               key={list.id}
             >
-              <Box overflow="hidden" textOverflow="ellipsis">
+              <Box overflow="hidden" color="white" textOverflow="ellipsis">
                 {list.title}
               </Box>
               <MenuRoot>
