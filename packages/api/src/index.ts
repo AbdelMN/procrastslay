@@ -6,6 +6,8 @@ import callbackRoute from './auth/notionCallback';
 import taskRoute from './task';
 import taskListRoute from './taskList';
 import habitRoute from './habits';
+import userRoute from './user';
+
 const app = new Hono({ strict: false }).basePath('/');
 
 app.route('/auth/', authRoute);
@@ -13,6 +15,8 @@ app.route('/auth/callback', callbackRoute);
 app.route('/task', taskRoute);
 app.route('/tasklist', taskListRoute);
 app.route('/habit', habitRoute);
+app.route('/user', userRoute);
+
 const port = 3000;
 
 serve({
