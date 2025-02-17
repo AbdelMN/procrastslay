@@ -3,6 +3,8 @@ import { Hono } from 'hono';
 import { z } from 'zod';
 import { prisma } from './prisma';
 import sessionMiddleware from './auth/sessionMiddleware';
+import { addUserFuel } from './services/userService';
+import rewardsMiddleware from './rewardsMiddleware';
 
 const app = new Hono();
 
@@ -169,6 +171,7 @@ app.post(
   '/complete',
   zValidator('json', HabitCompletionSchema),
   sessionMiddleware,
+  rewardsMiddleware,
   async (c) => {
     const completedHabit = c.req.valid('json');
     const user = c.get('user');
@@ -176,7 +179,7 @@ app.post(
 
     if (user) {
       const userId = user.id;
-
+      const rewards = c.get('rewards');
       const result = await prisma.habitCompletion.upsert({
         where: {
           habitId_date: {
@@ -192,7 +195,16 @@ app.post(
           date: new Date(date),
           count,
         },
+        include: {
+          habit: true,
+        },
       });
+      if (count >= 1) {
+        await addUserFuel(
+          userId,
+          rewards.habit * (count / result.habit.goalValue),
+        );
+      }
       return c.json(result);
     }
   },
