@@ -22,14 +22,16 @@ model User {
   habits            Habit[]
   tasklists         Tasklist[]
   Session           Session[]
+  goals             Goals[]
+  fuel              Int        @default(0)
+  streak            Int        @default(0)
 }
 
 model Session {
   id        String   @id
   userId    String
   expiresAt DateTime
-
-  user User @relation(references: [id], fields: [userId], onDelete: Cascade)
+  user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
 }
 
 model Tasklist {
@@ -63,18 +65,17 @@ model Subtask {
 }
 
 model Habit {
-  id             String   @id @default(uuid())
+  id             String            @id @default(uuid())
   userId         String
   name           String
   frequencyType  String
   frequencyValue Int?
   days           String[]
-
-  goalValue   Int
-  unit        String?
-  createdAt   DateTime          @default(now())
-  completions HabitCompletion[]
-  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  goalValue      Int
+  unit           String?
+  createdAt      DateTime          @default(now())
+  completions    HabitCompletion[]
+  user           User              @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model HabitCompletion {
@@ -85,4 +86,20 @@ model HabitCompletion {
   habit   Habit    @relation(references: [id], fields: [habitId], onDelete: Cascade)
 
   @@unique(name: "habitId_date", [habitId, date])
+}
+
+model Train {
+  id        String @id @default(uuid())
+  fuel      Int
+  kilometer Int
+}
+
+model Goals {
+  id       String   @id @default(uuid())
+  userId   String
+  pomodoro String[]
+  habit    Int
+  task     String[]
+  date     DateTime
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
