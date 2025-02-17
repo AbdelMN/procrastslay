@@ -1,0 +1,11 @@
+{
+  "rewards": {
+    "pomodoro": 6,
+    "habit": 10,
+    "task": {
+      "easy": 10,
+      "medium": 20,
+      "hard": 40
+    }
+  }
+}
