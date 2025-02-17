@@ -4,6 +4,8 @@ const app = new Hono();
 import { validateSessionToken } from './auth/sessions';
 import { prisma } from './prisma';
 import sessionMiddleware from './auth/sessionMiddleware';
+import rewardsMiddleware from './rewardsMiddleware';
+import { addUserFuel } from './services/userService';
 
 app.get('/', sessionMiddleware, async (c) => {
   const user = c.get('user');
@@ -54,6 +56,37 @@ app.post('/delete', sessionMiddleware, async (c) => {
       },
     });
     return c.json(tasklist);
+  }
+});
+
+app.post('/complete', sessionMiddleware, rewardsMiddleware, async (c) => {
+  const user = c.get('user');
+  const body = await c.req.json();
+
+  if (user) {
+    const userId = user.id;
+    const rewards = c.get('rewards');
+    const completed = body.completed;
+    const difficulty = body.difficulty;
+    const habitId = body.habitId;
+    const completedTaskList = await prisma.task.update({
+      where: { id: habitId, userId: userId },
+      data: {
+        completed,
+        difficulty,
+      },
+    });
+
+    switch (difficulty) {
+      case '1':
+        await addUserFuel(userId, rewards.task.easy);
+        break;
+      case '2':
+        await addUserFuel(userId, rewards.task.medium);
+        break;
+      case '3':
+        await addUserFuel(userId, rewards.task.hard);
+    }
   }
 });
 
