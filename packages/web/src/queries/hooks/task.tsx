@@ -1,6 +1,31 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import ky from 'ky';
 
+const completeTask = async ({
+  id,
+  difficulty,
+  completed,
+  taskListId,
+}: {
+  id: string;
+  difficulty: string;
+  completed: boolean;
+  taskListId: string;
+}) => {
+  const response = await ky
+    .post('http://localhost:3000/task/complete', {
+      credentials: 'include',
+      json: {
+        habitId: id,
+        difficulty: difficulty,
+        completed: completed,
+        taskListId: taskListId,
+      },
+    })
+    .json();
+  return response;
+};
+
 const patchTask = async ({
   id,
   title,
@@ -29,6 +54,19 @@ const patchTask = async ({
     })
     .json();
   return response;
+};
+
+export const useCompleteTask = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: completeTask,
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ['tasks', variables.taskListId],
+      });
+    },
+  });
 };
 
 export const useEditTask = (taskListId: string) => {

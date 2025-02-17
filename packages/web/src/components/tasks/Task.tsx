@@ -27,7 +27,7 @@ import {
 import DeleteTask from './DeleteTaskDialog';
 
 import { tasklistQuery, type Task } from '@/queries/task';
-import { useEditTask } from '@/queries/hooks/task';
+import { useCompleteTask, useEditTask } from '@/queries/hooks/task';
 import { useForm } from '@tanstack/react-form';
 import { useQuery } from '@tanstack/react-query';
 import { useMatchRoute, useNavigate } from '@tanstack/react-router';
@@ -36,6 +36,7 @@ import DatePicker from 'react-datepicker';
 
 const Task = ({ task }: { task: Task }) => {
   const editTask = useEditTask(task.tasklistId);
+  const completeTask = useCompleteTask();
   const matchRoute = useMatchRoute();
   const navigate = useNavigate({ from: '/' });
   const isUrlEdit = matchRoute({
@@ -105,12 +106,10 @@ const Task = ({ task }: { task: Task }) => {
         <Checkbox
           defaultChecked={task.completed}
           onCheckedChange={({ checked }) => {
-            editTask.mutate({
+            completeTask.mutate({
               id: task.id,
-              title: task.title,
               difficulty: task.difficulty,
               taskListId: task.tasklistId,
-              dueDate: task.dueDate,
               completed: Boolean(checked),
             });
           }}
