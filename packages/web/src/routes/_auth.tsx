@@ -1,7 +1,8 @@
 import { Outlet, createFileRoute, redirect } from '@tanstack/react-router';
-import { Box, Flex } from '@chakra-ui/react';
+import { Box, Flex, HStack, Text, VStack } from '@chakra-ui/react';
 import Sidebar from '@/components/sidebar/Sidebar';
-
+import { FaBars, FaBolt, FaGasPump } from 'react-icons/fa6';
+import UserInfos from '@/components/user/UserInfos';
 export const Route = createFileRoute('/_auth')({
   beforeLoad: ({ context, location }) => {
     if (!context.auth.isLoggedIn) {
@@ -32,11 +33,25 @@ function AuthLayout() {
   // };
 
   return (
-    <Flex>
-      <Sidebar />
-      <Box bgColor={'gray.950'} width={'100%'}>
-        <Outlet />
-      </Box>
-    </Flex>
+    <>
+      <Flex>
+        <Sidebar />
+        <Box bgColor={'gray.950'} width={'100%'}>
+          <HStack
+            justifyContent={'space-between'}
+            h={'5vh'}
+            bg="gray.900"
+            width={'100%'}
+            pl={'10'}
+            pr={'10'}
+          >
+            <FaBars size={20} />
+            <UserInfos />
+          </HStack>
+
+          <Outlet />
+        </Box>
+      </Flex>
+    </>
   );
 }
