@@ -5,7 +5,7 @@ import { validateSessionToken } from './auth/sessions';
 import { prisma } from './prisma';
 import sessionMiddleware from './auth/sessionMiddleware';
 import rewardsMiddleware from './rewardsMiddleware';
-import { addUserFuel } from './services/userService';
+import { addOrRemoveUserFuel, addUserFuel } from './services/userService';
 
 app.get('/', sessionMiddleware, async (c) => {
   const user = c.get('user');
@@ -73,20 +73,43 @@ app.post('/complete', sessionMiddleware, rewardsMiddleware, async (c) => {
       where: { id: habitId, userId: userId },
       data: {
         completed,
+        ...(completed ? { completedAt: new Date() } : {}),
         difficulty,
       },
     });
 
+    const completedAt =
+      !completed && completedTaskList.completedAt
+        ? completedTaskList.completedAt
+        : undefined;
+
     switch (difficulty) {
       case '1':
-        await addUserFuel(userId, rewards.task.easy);
+        await addOrRemoveUserFuel(
+          completed,
+          userId,
+          rewards.task.easy,
+          completedAt,
+        );
         break;
       case '2':
-        await addUserFuel(userId, rewards.task.medium);
+        await addOrRemoveUserFuel(
+          completed,
+          userId,
+          rewards.task.medium,
+          completedAt,
+        );
         break;
       case '3':
-        await addUserFuel(userId, rewards.task.hard);
+        await addOrRemoveUserFuel(
+          completed,
+          userId,
+          rewards.task.hard,
+          completedAt,
+        );
     }
+
+    return c.json(completedTaskList);
   }
 });
 

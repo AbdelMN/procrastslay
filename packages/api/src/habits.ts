@@ -3,7 +3,7 @@ import { Hono } from 'hono';
 import { z } from 'zod';
 import { prisma } from './prisma';
 import sessionMiddleware from './auth/sessionMiddleware';
-import { addUserFuel } from './services/userService';
+import { addOrRemoveUserFuel, addUserFuel } from './services/userService';
 import rewardsMiddleware from './rewardsMiddleware';
 
 const app = new Hono();
@@ -200,11 +200,14 @@ app.post(
         },
       });
       if (count >= 1) {
-        await addUserFuel(
+        await addOrRemoveUserFuel(
+          true,
           userId,
           rewards.habit * (count / result.habit.goalValue),
+          new Date(date),
         );
       }
+      await addOrRemoveUserFuel(false, userId, rewards.habit, new Date(date));
       return c.json(result);
     }
   },
