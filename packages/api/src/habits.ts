@@ -205,9 +205,19 @@ app.post(
           userId,
           rewards.habit * (count / result.habit.goalValue),
           new Date(date),
+          'habit',
         );
       }
-      await addOrRemoveUserFuel(false, userId, rewards.habit, new Date(date));
+      if (count === 0) {
+        await addOrRemoveUserFuel(
+          false,
+          userId,
+          rewards.habit,
+          new Date(date),
+          'habit',
+        );
+      }
+
       return c.json(result);
     }
   },

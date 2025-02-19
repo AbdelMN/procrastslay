@@ -1,6 +1,21 @@
 import { prisma } from '../prisma';
 
-export const addUserFuel = async (userId: string, amount: number) => {
+export const addUserFuel = async (
+  userId: string,
+  amount: number,
+  date?: Date,
+  type?: string,
+) => {
+  if (type === 'habit' && date) {
+    const isCompletionToday =
+      new Date(date).toISOString().split('T')[0] ===
+      new Date().toISOString().split('T')[0];
+
+    if (!isCompletionToday) {
+      return;
+    }
+  }
+
   return await prisma.user.update({
     where: {
       id: userId,
@@ -37,8 +52,9 @@ export const addOrRemoveUserFuel = async (
   userId: string,
   amount: number,
   completedAt?: Date,
+  type?: string,
 ) => {
   if (!completion && completedAt)
     return removeUserFuel(userId, amount, completedAt);
-  return await addUserFuel(userId, amount);
+  return await addUserFuel(userId, amount, completedAt, type);
 };
