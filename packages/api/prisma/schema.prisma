@@ -49,6 +49,7 @@ model Task {
   difficulty  String
   dueDate     DateTime?
   completed   Boolean   @default(false)
+  completedAt DateTime
   tasklistId  String?
   tasklist    Tasklist? @relation(fields: [tasklistId], references: [id])
   subtasks    Subtask[]
