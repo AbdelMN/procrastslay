@@ -65,6 +65,9 @@ export const useCompleteTask = () => {
       queryClient.invalidateQueries({
         queryKey: ['tasks', variables.taskListId],
       });
+      queryClient.invalidateQueries({
+        queryKey: ['userInfos'],
+      });
     },
   });
 };

@@ -51,6 +51,9 @@ export const useCompleteHabit = (day?: Date) => {
       queryClient.invalidateQueries({
         queryKey: day ? ['habits', day] : ['habits'],
       });
+      queryClient.invalidateQueries({
+        queryKey: ['userInfos'],
+      });
     },
   });
 };
