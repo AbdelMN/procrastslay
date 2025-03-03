@@ -34,11 +34,28 @@ app.post('/', zValidator('json', GoalSchema), sessionMiddleware, async (c) => {
           : [],
         habit,
         task: task ? task.map((task) => JSON.stringify(task)) : [],
+        active: true,
         date: new Date(date),
       },
     });
 
     return c.json(goal);
+  }
+});
+
+app.get('/current', sessionMiddleware, async (c) => {
+  const user = c.get('user');
+
+  if (user) {
+    const userId = user.id;
+
+    const receivedGoal = await prisma.goals.findMany({
+      where: {
+        userId: userId,
+        active: true,
+      },
+    });
+    return c.json(receivedGoal);
   }
 });
 
