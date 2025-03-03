@@ -49,7 +49,7 @@ model Task {
   difficulty  String
   dueDate     DateTime?
   completed   Boolean   @default(false)
-  completedAt DateTime
+  completedAt DateTime?
   tasklistId  String?
   tasklist    Tasklist? @relation(fields: [tasklistId], references: [id])
   subtasks    Subtask[]
@@ -96,11 +96,13 @@ model Train {
 }
 
 model Goals {
-  id       String   @id @default(uuid())
-  userId   String
-  pomodoro String[]
-  habit    Int
-  task     String[]
-  date     DateTime
-  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id              String   @id @default(uuid())
+  userId          String
+  pomodoro        String[]
+  habit           Int
+  task            String[]
+  date            DateTime
+  active          Boolean  @default(false)
+  completionCount Int
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
