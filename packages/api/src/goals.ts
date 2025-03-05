@@ -8,11 +8,23 @@ const app = new Hono();
 
 const GoalSchema = z.object({
   pomodoro: z
-    .array(z.object({ duration: z.string(), goal: z.number() }))
+    .array(
+      z.object({
+        duration: z.string(),
+        goal: z.number(),
+        completed: z.number(),
+      }),
+    )
     .optional(),
-  habit: z.number(),
+  habit: z.array(z.object({ goal: z.number(), completed: z.number() })),
   task: z
-    .array(z.object({ difficulty: z.string(), goal: z.number() }))
+    .array(
+      z.object({
+        difficulty: z.string(),
+        goal: z.number(),
+        completed: z.number(),
+      }),
+    )
     .optional(),
   date: z.string(),
 });
