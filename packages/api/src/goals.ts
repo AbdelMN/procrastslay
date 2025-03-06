@@ -44,7 +44,7 @@ app.post('/', zValidator('json', GoalSchema), sessionMiddleware, async (c) => {
         pomodoro: pomodoro
           ? pomodoro.map((pomodoro) => JSON.stringify(pomodoro))
           : [],
-        habit,
+        habit: habit ? habit.map((habit) => JSON.stringify(habit)) : [],
         task: task ? task.map((task) => JSON.stringify(task)) : [],
         active: true,
         date: new Date(date),
