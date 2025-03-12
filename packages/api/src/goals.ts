@@ -67,7 +67,23 @@ app.get('/current', sessionMiddleware, async (c) => {
         active: true,
       },
     });
+
     return c.json(receivedGoal);
+  }
+});
+
+app.post('/achieve', sessionMiddleware, async (c) => {
+  const user = c.get('user');
+
+  if (user) {
+    const userId = user.id;
+
+    const goal = await prisma.goals.findMany({
+      where: { userId: userId, active: true },
+      select: { pomodoro: true, task: true, habit: true },
+    });
+
+    console.log(Object.values(goal[0]));
   }
 });
 
