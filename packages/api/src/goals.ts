@@ -3,6 +3,7 @@ import { Hono } from 'hono';
 import { z } from 'zod';
 import sessionMiddleware from './auth/sessionMiddleware';
 import { prisma } from './prisma';
+import { addStreak, resetStreak } from './services/userService';
 
 const app = new Hono();
 
@@ -28,6 +29,15 @@ const GoalSchema = z.object({
     .optional(),
   date: z.string(),
 });
+
+const cancelGoal = async (userId: string) => {
+  const goal = await prisma.goals.findMany({ where: { userId, active: true } });
+
+  return await prisma.goals.update({
+    where: { id: goal[0].id },
+    data: { active: false },
+  });
+};
 
 app.post('/', zValidator('json', GoalSchema), sessionMiddleware, async (c) => {
   const receivedGoal = c.req.valid('json');
@@ -83,7 +93,39 @@ app.post('/achieve', sessionMiddleware, async (c) => {
       select: { pomodoro: true, task: true, habit: true },
     });
 
-    console.log(Object.values(goal[0]));
+    const totals = Object.values(goal[0]).reduce(
+      (totals, categoryItems) => {
+        if (!categoryItems.length) return totals;
+        const parsedCategoryItems = categoryItems.map((item) =>
+          JSON.parse(item),
+        );
+
+        totals.totalCompleted += parsedCategoryItems.reduce(
+          (sum, item) => sum + item.completed,
+          0,
+        );
+        totals.totalGoal += parsedCategoryItems.reduce(
+          (sum, item) => sum + item.goal,
+          0,
+        );
+        console.log(totals);
+        return totals;
+      },
+      { totalCompleted: 0, totalGoal: 0 },
+    );
+
+    const completionPourcentage =
+      (totals.totalCompleted * totals.totalGoal) / 100;
+
+    if (completionPourcentage < 60) {
+      resetStreak(userId);
+    }
+    if (completionPourcentage < 100) {
+      addStreak(userId);
+    }
+
+    addStreak(userId);
+    return c.json(cancelGoal(userId));
   }
 });
 
