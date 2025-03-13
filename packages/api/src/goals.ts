@@ -3,7 +3,8 @@ import { Hono } from 'hono';
 import { z } from 'zod';
 import sessionMiddleware from './auth/sessionMiddleware';
 import { prisma } from './prisma';
-import { addStreak, resetStreak } from './services/userService';
+import { addStreak, getUserFuel, resetStreak } from './services/userService';
+import { addTrainFuel } from './services/trainService';
 
 const app = new Hono();
 
@@ -116,15 +117,20 @@ app.post('/achieve', sessionMiddleware, async (c) => {
 
     const completionPourcentage =
       (totals.totalCompleted * totals.totalGoal) / 100;
+    const userFuel = await getUserFuel(userId);
 
     if (completionPourcentage < 60) {
       resetStreak(userId);
+      addTrainFuel(userId, userFuel * 0.5);
     }
     if (completionPourcentage < 100) {
       addStreak(userId);
+
+      addTrainFuel(userId, userFuel);
     }
 
     addStreak(userId);
+    addTrainFuel(userId, userFuel * 1.5);
     return c.json(cancelGoal(userId));
   }
 });
