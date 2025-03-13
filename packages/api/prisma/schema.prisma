@@ -23,6 +23,7 @@ model User {
   tasklists         Tasklist[]
   Session           Session[]
   goals             Goals[]
+  train             Train?
   fuel              Int        @default(0)
   streak            Int        @default(0)
 }
@@ -91,8 +92,10 @@ model HabitCompletion {
 
 model Train {
   id        String @id @default(uuid())
-  fuel      Int
-  kilometer Int
+  userId    String @unique
+  fuel      Int    @default(0)
+  kilometer Int    @default(0)
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Goals {
@@ -103,6 +106,5 @@ model Goals {
   task     String[]
   date     DateTime
   active   Boolean  @default(false)
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
