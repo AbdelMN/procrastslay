@@ -58,3 +58,17 @@ export const addOrRemoveUserFuel = async (
     return removeUserFuel(userId, amount, completedAt);
   return await addUserFuel(userId, amount, completedAt, type);
 };
+
+export const addStreak = async (userId: string) => {
+  return await prisma.user.update({
+    where: { id: userId },
+    data: { streak: { increment: 1 } },
+  });
+};
+
+export const resetStreak = async (userId: string) => {
+  return await prisma.user.update({
+    where: { id: userId },
+    data: { streak: 0 },
+  });
+};
