@@ -3,7 +3,12 @@ import { Hono } from 'hono';
 import { z } from 'zod';
 import sessionMiddleware from './auth/sessionMiddleware';
 import { prisma } from './prisma';
-import { addStreak, getUserFuel, resetStreak } from './services/userService';
+import {
+  addOrRemoveUserFuel,
+  addStreak,
+  getUserFuel,
+  resetStreak,
+} from './services/userService';
 import { addTrainFuel } from './services/trainService';
 
 const app = new Hono();
@@ -122,15 +127,19 @@ app.post('/achieve', sessionMiddleware, async (c) => {
     if (completionPourcentage < 60) {
       resetStreak(userId);
       addTrainFuel(userId, userFuel * 0.5);
+      addOrRemoveUserFuel(false, userId, userFuel);
+      return c.json(cancelGoal(userId));
     }
     if (completionPourcentage < 100) {
       addStreak(userId);
-
       addTrainFuel(userId, userFuel);
+      addOrRemoveUserFuel(false, userId, userFuel);
+      return c.json(cancelGoal(userId));
     }
 
     addStreak(userId);
     addTrainFuel(userId, userFuel * 1.5);
+    addOrRemoveUserFuel(false, userId, userFuel);
     return c.json(cancelGoal(userId));
   }
 });
