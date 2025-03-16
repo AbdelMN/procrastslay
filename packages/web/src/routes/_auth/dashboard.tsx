@@ -4,6 +4,7 @@ import { useAuth } from '../../auth';
 
 import { Box } from '@chakra-ui/react';
 import Goal from '@/components/goals/Goal';
+import GoalForm from '@/components/goals/GoalForm';
 export const Route = createFileRoute('/_auth/dashboard')({
   component: DashboardPage,
 });
@@ -17,6 +18,7 @@ function DashboardPage() {
   return (
     <Box p="4">
       <Goal />
+      <GoalForm />
     </Box>
   );
 }
