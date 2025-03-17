@@ -8,9 +8,16 @@ import taskListRoute from './taskList';
 import habitRoute from './habits';
 import userRoute from './user';
 import goalsRoute from './goals';
+import { cors } from 'hono/cors';
 
 const app = new Hono({ strict: false }).basePath('/');
 
+app.use(
+  cors({
+    origin: 'http://localhost:5173',
+    credentials: true,
+  }),
+);
 app.route('/auth/', authRoute);
 app.route('/auth/callback', callbackRoute);
 app.route('/task', taskRoute);
