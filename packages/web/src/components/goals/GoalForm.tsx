@@ -2,10 +2,10 @@ import {
   Button,
   FieldLabel,
   HStack,
-  Input,
   Separator,
   VStack,
-  NativeSelect,
+  createListCollection,
+  Text,
 } from '@chakra-ui/react';
 import {
   DialogBody,
@@ -18,13 +18,28 @@ import { useForm } from '@tanstack/react-form';
 import { Field } from '../ui/field';
 
 import { useRef } from 'react';
-
+import { FormInput } from '../form/FormInput';
+import GoalFormSchema from './GoalFormSchema';
+import FormSelect from '../form/FormSelect';
+const difficulty = createListCollection({
+  items: [
+    { label: 'Easy', value: '1' },
+    { label: 'Hard', value: '2' },
+    {
+      label: 'Mega Hard',
+      value: '3',
+    },
+  ],
+});
 const GoalForm = () => {
   const form = useForm({
     defaultValues: {
       habits: [] as number[],
       pomodoro: [] as { duration: string; goal: number }[],
-      tasks: [] as { difficulty: string; goal: number }[],
+      tasks: [] as { difficulty: '1' | '2' | '3'; goal: number }[],
+    },
+    validators: {
+      onChange: GoalFormSchema,
     },
   });
   const contentRef = useRef<HTMLDivElement>(null);
@@ -61,18 +76,12 @@ const GoalForm = () => {
                         <HStack key={index}>
                           <form.Field
                             name={`habits[${index}]`}
-                            children={(subField) => (
-                              <Field label="Goal">
-                                <Input
-                                  type="text"
-                                  value={subField.state.value}
-                                  autoFocus
-                                  onChange={(e) =>
-                                    subField.handleChange(+e.target.value)
-                                  }
-                                />
-                              </Field>
-                            )}
+                            children={(subField) => {
+                              console.log(subField.state.meta);
+                              return (
+                                <FormInput field={subField} label="Goal" />
+                              );
+                            }}
                           ></form.Field>
                           <Button
                             alignSelf={'flex-end'}
@@ -108,32 +117,17 @@ const GoalForm = () => {
                         <HStack key={index}>
                           <form.Field
                             name={`pomodoro[${index}].duration`}
-                            children={(subField) => (
-                              <Field label="Duration">
-                                <Input
-                                  type="text"
-                                  value={subField.state.value}
-                                  autoFocus
-                                  onChange={(e) =>
-                                    subField.handleChange(e.target.value)
-                                  }
-                                />
-                              </Field>
-                            )}
+                            children={(subField) => {
+                              console.log(subField.state.meta);
+                              return (
+                                <FormInput field={subField} label="Duration" />
+                              );
+                            }}
                           />
                           <form.Field
                             name={`pomodoro[${index}].goal`}
                             children={(subField) => (
-                              <Field label="Goal">
-                                <Input
-                                  type="text"
-                                  value={subField.state.value}
-                                  autoFocus
-                                  onChange={(e) =>
-                                    subField.handleChange(+e.target.value)
-                                  }
-                                />
-                              </Field>
+                              <FormInput field={subField} label="Goal" />
                             )}
                           />
                           <Button
@@ -173,35 +167,24 @@ const GoalForm = () => {
                             <form.Field
                               name={`tasks[${index}].difficulty`}
                               children={(subField) => (
-                                <NativeSelect.Root size="sm" width="240px">
-                                  <NativeSelect.Field
-                                    placeholder="Select option"
-                                    value={subField.state.value}
-                                    onChange={(e) => {
-                                      subField.handleChange(e.target.value);
-                                      console.log(subField.state.value);
-                                    }}
-                                  >
-                                    <option value="1">Easy</option>
-                                    <option value="2">Hard</option>
-                                    <option value="3">Mega Hard</option>
-                                  </NativeSelect.Field>
-                                  <NativeSelect.Indicator />
-                                </NativeSelect.Root>
+                                <FormSelect
+                                  valueChangeFn={({ value }) => {
+                                    console.log(value);
+                                    subField.handleChange(value[0]);
+                                  }}
+                                  field={subField}
+                                  contentRef={contentRef}
+                                  required
+                                  label="Frequency Type"
+                                  collection={difficulty}
+                                />
                               )}
                             />
 
                             <form.Field
                               name={`tasks[${index}].goal`}
                               children={(subField) => (
-                                <Input
-                                  type="text"
-                                  value={subField.state.value}
-                                  autoFocus
-                                  onChange={(e) =>
-                                    subField.handleChange(+e.target.value)
-                                  }
-                                />
+                                <FormInput field={subField} label="Goal" />
                               )}
                             />
                             <Button
@@ -220,14 +203,18 @@ const GoalForm = () => {
                   selector={(state) => [
                     state.canSubmit,
                     state.isSubmitting,
-                    state.values,
+
+                    state.errors,
                   ]}
-                  children={([canSubmit, isSubmitting, values]) => {
-                    console.log(values);
+                  children={([canSubmit, isSubmitting, errors]) => {
+                    console.log(errors);
                     return (
-                      <Button type="submit" disabled={!canSubmit}>
-                        {isSubmitting ? '...' : 'Submit'}
-                      </Button>
+                      <>
+                        <Text>{errors}</Text>
+                        <Button type="submit" disabled={!canSubmit}>
+                          {isSubmitting ? '...' : 'Submit'}
+                        </Button>
+                      </>
                     );
                   }}
                 />
