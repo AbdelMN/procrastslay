@@ -20,7 +20,7 @@ export const FormInput: FC<FormFieldProps> = (props) => {
         placeholder={props.placeholder}
         id={field.name}
         name={field.name}
-        value={field.state.value as number}
+        value={field.state.value as number | string}
         onBlur={field.handleBlur}
         onChange={(e) => field.handleChange(e.target.value)}
       />
