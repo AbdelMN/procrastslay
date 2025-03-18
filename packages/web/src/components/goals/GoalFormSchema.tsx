@@ -2,12 +2,12 @@ import { z } from 'zod';
 
 export const GoalFormSchema = z
   .object({
-    habits: z.array(z.coerce.number()),
+    habits: z.array(z.coerce.number().gt(0)),
     pomodoro: z
       .array(
         z.object({
           duration: z.string(),
-          goal: z.coerce.number(),
+          goal: z.coerce.number().gt(0),
         }),
       )
       .refine(
@@ -20,7 +20,7 @@ export const GoalFormSchema = z
       .array(
         z.object({
           difficulty: z.string(z.enum(['1', '2', '3'])),
-          goal: z.coerce.number(),
+          goal: z.coerce.number().gt(0),
         }),
       )
       .refine(
@@ -42,4 +42,5 @@ export const GoalFormSchema = z
     },
   );
 
+export type GoalFormType = z.infer<typeof GoalFormSchema>;
 export default GoalFormSchema;
