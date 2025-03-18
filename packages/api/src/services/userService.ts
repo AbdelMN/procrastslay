@@ -26,7 +26,7 @@ export const addUserFuel = async (
   });
 };
 
-const removeUserFuel = async (userId: string, amount: number) => {
+export const removeUserFuel = async (userId: string, amount: number) => {
   return await prisma.user.update({
     where: {
       id: userId,
@@ -52,11 +52,8 @@ export const addOrRemoveUserFuel = async (
 
       if (isCompletionToday) return removeUserFuel(userId, amount);
     }
-    return await addUserFuel(userId, amount, completedAt, type);
   }
-  if (!completion) {
-    return removeUserFuel(userId, amount);
-  }
+  return await addUserFuel(userId, amount, completedAt, type);
 };
 
 export const getUserFuel = async (userId: string) => {

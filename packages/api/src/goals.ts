@@ -4,9 +4,9 @@ import { z } from 'zod';
 import sessionMiddleware from './auth/sessionMiddleware';
 import { prisma } from './prisma';
 import {
-  addOrRemoveUserFuel,
   addStreak,
   getUserFuel,
+  removeUserFuel,
   resetStreak,
 } from './services/userService';
 import { addTrainFuel } from './services/trainService';
@@ -19,17 +19,31 @@ const GoalSchema = z.object({
       z.object({
         duration: z.string(),
         goal: z.number(),
-        completed: z.number(),
+        completed: z
+          .number()
+          .optional()
+          .transform(() => 0),
       }),
     )
     .optional(),
-  habit: z.array(z.object({ goal: z.number(), completed: z.number() })),
-  task: z
+  habit: z.array(
+    z.object({
+      goal: z.number(),
+      completed: z
+        .number()
+        .optional()
+        .transform(() => 0),
+    }),
+  ),
+  tasks: z
     .array(
       z.object({
         difficulty: z.string(),
         goal: z.number(),
-        completed: z.number(),
+        completed: z
+          .number()
+          .optional()
+          .transform(() => 0),
       }),
     )
     .optional(),
@@ -52,7 +66,7 @@ app.post('/', zValidator('json', GoalSchema), sessionMiddleware, async (c) => {
 
   if (user) {
     const userId = user.id;
-    const { pomodoro, habit, task, date } = receivedGoal;
+    const { pomodoro, habit, tasks, date } = receivedGoal;
 
     const goal = await prisma.goals.create({
       data: {
@@ -61,7 +75,7 @@ app.post('/', zValidator('json', GoalSchema), sessionMiddleware, async (c) => {
           ? pomodoro.map((pomodoro) => JSON.stringify(pomodoro))
           : [],
         habit: habit ? habit.map((habit) => JSON.stringify(habit)) : [],
-        task: task ? task.map((task) => JSON.stringify(task)) : [],
+        task: tasks ? tasks.map((tasks) => JSON.stringify(tasks)) : [],
         active: true,
         date: new Date(date),
       },
@@ -127,19 +141,19 @@ app.post('/achieve', sessionMiddleware, async (c) => {
     if (completionPourcentage < 60) {
       resetStreak(userId);
       addTrainFuel(userId, userFuel * 0.5);
-      addOrRemoveUserFuel(false, userId, userFuel);
+      removeUserFuel(userId, userFuel);
       return c.json(cancelGoal(userId));
     }
     if (completionPourcentage < 100) {
       addStreak(userId);
       addTrainFuel(userId, userFuel);
-      addOrRemoveUserFuel(false, userId, userFuel);
+      removeUserFuel(userId, userFuel);
       return c.json(cancelGoal(userId));
     }
 
     addStreak(userId);
     addTrainFuel(userId, userFuel * 1.5);
-    addOrRemoveUserFuel(false, userId, userFuel);
+    removeUserFuel(userId, userFuel);
     return c.json(cancelGoal(userId));
   }
 });
