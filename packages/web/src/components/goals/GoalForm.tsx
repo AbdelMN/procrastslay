@@ -21,6 +21,7 @@ import { useRef } from 'react';
 import { FormInput } from '../form/FormInput';
 import GoalFormSchema from './GoalFormSchema';
 import FormSelect from '../form/FormSelect';
+import { useAddGoal } from '@/queries/hooks/goals';
 const difficulty = createListCollection({
   items: [
     { label: 'Easy', value: '1' },
@@ -32,6 +33,7 @@ const difficulty = createListCollection({
   ],
 });
 const GoalForm = () => {
+  const addGoal = useAddGoal();
   const form = useForm({
     defaultValues: {
       habits: [] as number[],
@@ -40,6 +42,11 @@ const GoalForm = () => {
     },
     validators: {
       onChange: GoalFormSchema,
+    },
+
+    onSubmit: async ({ value }) => {
+      console.log();
+      addGoal.mutate(GoalFormSchema.parse(value));
     },
   });
   const contentRef = useRef<HTMLDivElement>(null);
@@ -53,7 +60,13 @@ const GoalForm = () => {
         <DialogContent ref={contentRef}>
           <DialogHeader>Add a goal</DialogHeader>
           <DialogBody>
-            <form>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                form.handleSubmit();
+              }}
+            >
               <VStack>
                 <form.Field
                   name="habits"
