@@ -12,7 +12,7 @@ type ReceivedGoalType = {
 const fetchCurrentGoal = async () =>
   (await ky('http://localhost:3000/goals/current', {
     credentials: 'include',
-  }).json()) as ReceivedGoalType[];
+  }).json()) as ReceivedGoalType;
 
 export const getCurrentGoal = () =>
   queryOptions({ queryKey: ['goals'], queryFn: fetchCurrentGoal });

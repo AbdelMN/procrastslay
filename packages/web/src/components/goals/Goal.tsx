@@ -6,26 +6,25 @@ const Goal = () => {
   const { data, isPending, isError } = useQuery(getCurrentGoal());
 
   if (isPending || isError) return <Spinner />;
-  console.log(data[0]);
+
   const progressData = [
-    ...data[0].task.map((task) => ({
+    ...data.task.map((task) => ({
       label: `${task.difficulty} task`,
       completed: task.completed,
       goal: task.goal,
     })),
-    ...data[0].pomodoro.map((pomo) => ({
+    ...data.pomodoro.map((pomo) => ({
       label: `${pomo.duration} min pomodoro`,
       completed: pomo.completed,
       goal: pomo.goal,
     })),
-    ...data[0].habit.map((habit) => ({
+    ...data.habit.map((habit) => ({
       label: 'Habit',
       completed: habit.completed,
       goal: habit.goal,
     })),
   ];
 
-  console.log(progressData);
   return (
     <Card.Root width="320px">
       <Card.Body gap="2">
