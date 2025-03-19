@@ -98,7 +98,14 @@ app.get('/current', sessionMiddleware, async (c) => {
       },
     });
 
-    return c.json(receivedGoal);
+    const parsedGoals = receivedGoal.map((goal) => ({
+      ...goal,
+      task: goal.task.map((t) => JSON.parse(t)),
+      habit: goal.habit.map((h) => JSON.parse(h)),
+      pomodoro: goal.pomodoro.map((p) => JSON.parse(p)),
+    }));
+
+    return c.json(parsedGoals);
   }
 });
 
