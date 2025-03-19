@@ -1,5 +1,5 @@
 import { GoalFormType } from '@/components/goals/GoalFormSchema';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import ky from 'ky';
 
 const postGoal = async (goal: GoalFormType) => {
@@ -13,8 +13,13 @@ const postGoal = async (goal: GoalFormType) => {
       date: '2025-03-18',
     },
   });
-  console.log(result);
 };
+
+const achieveCurrentGoal = async (goalId: string) =>
+  await ky.post('http://localhost:3000/goals/achieve', {
+    credentials: 'include',
+    json: { id: goalId },
+  });
 
 export const useAddGoal = () => {
   const queryClient = useQueryClient();
@@ -24,6 +29,16 @@ export const useAddGoal = () => {
       queryClient.invalidateQueries({
         queryKey: ['goals'],
       });
+    },
+  });
+};
+
+export const useAchieveGoal = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: achieveCurrentGoal,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['goals'] });
     },
   });
 };

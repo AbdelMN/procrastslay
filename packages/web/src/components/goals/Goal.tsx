@@ -11,7 +11,9 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { HiColorSwatch } from 'react-icons/hi';
 import GoalForm from './GoalForm';
+import { useAchieveGoal } from '@/queries/hooks/goals';
 const Goal = () => {
+  const achieveGoal = useAchieveGoal();
   const { data, isPending, isError } = useQuery(getCurrentGoal());
 
   if (isPending || isError) return <Spinner />;
@@ -61,7 +63,9 @@ const Goal = () => {
       </Card.Body>
       <Card.Footer justifyContent="flex-end">
         <Button variant="outline">Cancel goal</Button>
-        <Button>Complete day</Button>
+        <Button onClick={() => achieveGoal.mutate(data.id)}>
+          Complete day
+        </Button>
       </Card.Footer>
     </Card.Root>
   ) : (
