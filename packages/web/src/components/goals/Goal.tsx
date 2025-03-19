@@ -1,36 +1,31 @@
-import { Button, Card, HStack, Progress } from '@chakra-ui/react';
+import { getCurrentGoal } from '@/queries/goal';
+import { Button, Card, HStack, Progress, Spinner } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 
-const mockGoal = {
-  id: '703945a5-f3a4-427c-991f-a0cd1537be81',
-  userId: '1',
-  pomodoro: [{ duration: 25, goal: 3, completed: 2 }],
-  habit: [{ goal: 6, completed: 6 }],
-  task: [
-    { difficulty: 'Easy', goal: 2, completed: 1 },
-    { difficulty: 'Medium', goal: 4, completed: 2 },
-  ],
-  date: '2025-03-01T00:00:00.000Z',
-  active: true,
-};
 const Goal = () => {
+  const { data, isPending, isError } = useQuery(getCurrentGoal());
+
+  if (isPending || isError) return <Spinner />;
+  console.log(data[0]);
   const progressData = [
-    ...mockGoal.task.map((task) => ({
+    ...data[0].task.map((task) => ({
       label: `${task.difficulty} task`,
       completed: task.completed,
       goal: task.goal,
     })),
-    ...mockGoal.pomodoro.map((pomo) => ({
-      label: 'Pomodoro',
+    ...data[0].pomodoro.map((pomo) => ({
+      label: `${pomo.duration} min pomodoro`,
       completed: pomo.completed,
       goal: pomo.goal,
     })),
-    ...mockGoal.habit.map((habit) => ({
+    ...data[0].habit.map((habit) => ({
       label: 'Habit',
       completed: habit.completed,
       goal: habit.goal,
     })),
   ];
 
+  console.log(progressData);
   return (
     <Card.Root width="320px">
       <Card.Body gap="2">
