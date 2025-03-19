@@ -105,7 +105,7 @@ app.get('/current', sessionMiddleware, async (c) => {
       pomodoro: goal.pomodoro.map((p) => JSON.parse(p)),
     }));
 
-    return c.json(parsedGoals);
+    return c.json(parsedGoals.length > 0 ? parsedGoals[0] : {});
   }
 });
 
