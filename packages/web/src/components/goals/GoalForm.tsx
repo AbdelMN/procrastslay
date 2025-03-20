@@ -213,18 +213,13 @@ const GoalForm = () => {
                   )}
                 />
                 <form.Subscribe
-                  selector={(state) => [
-                    state.canSubmit,
-                    state.isSubmitting,
-
-                    state.errors,
-                  ]}
-                  children={([canSubmit, isSubmitting, errors]) => {
-                    console.log(errors);
+                  selector={(state) => [state.isSubmitting, state.errors]}
+                  children={([isSubmitting, errors]) => {
+                    const hasErrors = Object.keys(errors).length > 0;
                     return (
                       <>
                         <Text>{errors}</Text>
-                        <Button type="submit" disabled={!canSubmit}>
+                        <Button type="submit" disabled={hasErrors}>
                           {isSubmitting ? '...' : 'Submit'}
                         </Button>
                       </>
