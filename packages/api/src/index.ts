@@ -8,6 +8,7 @@ import taskListRoute from './taskList';
 import habitRoute from './habits';
 import userRoute from './user';
 import goalsRoute from './goals';
+import trainRoute from './train';
 import { cors } from 'hono/cors';
 
 const app = new Hono({ strict: false }).basePath('/');
@@ -25,7 +26,7 @@ app.route('/tasklist', taskListRoute);
 app.route('/habit', habitRoute);
 app.route('/user', userRoute);
 app.route('/goals', goalsRoute);
-
+app.route('/train', trainRoute);
 const port = 3000;
 
 serve({
