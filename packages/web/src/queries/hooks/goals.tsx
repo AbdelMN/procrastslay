@@ -1,10 +1,10 @@
 import { GoalFormType } from '@/components/goals/GoalFormSchema';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import ky from 'ky';
 
 const postGoal = async (goal: GoalFormType) => {
   const { habits, pomodoro, tasks } = goal;
-  const result = await ky.post('http://localhost:3000/goals', {
+  return await ky.post('http://localhost:3000/goals', {
     credentials: 'include',
     json: {
       habit: habits,

@@ -6,3 +6,6 @@ export const addTrainFuel = async (userId: string, amount: number) => {
     data: { fuel: { increment: amount } },
   });
 };
+
+
+export const 
