@@ -1,3 +1,4 @@
+import { table } from 'console';
 import { prisma } from '../prisma';
 
 export const addTrainFuel = async (userId: string, amount: number) => {
@@ -7,5 +8,10 @@ export const addTrainFuel = async (userId: string, amount: number) => {
   });
 };
 
+export const updateTrainProgress = async (trainId: string) => {
+  const train = await prisma.train.findUnique({ where: { id: trainId } });
 
-export const 
+  if (!train) throw new Error('Train not found');
+
+  const lastUpdate = train.lastUpdate;
+};
