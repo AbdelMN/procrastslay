@@ -91,11 +91,12 @@ model HabitCompletion {
 }
 
 model Train {
-  id        String @id @default(uuid())
-  userId    String @unique
-  fuel      Int    @default(0)
-  kilometer Int    @default(0)
-  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id         String    @id @default(uuid())
+  userId     String    @unique
+  fuel       Int       @default(0)
+  kilometer  Int       @default(0)
+  lastUpdate DateTime?
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Goals {
