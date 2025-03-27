@@ -13,5 +13,12 @@ export const updateTrainProgress = async (trainId: string) => {
 
   if (!train) throw new Error('Train not found');
 
-  const lastUpdate = train.lastUpdate;
+  const lastUpdate = train.lastUpdate ? train.lastUpdate : new Date();
+
+  const dateNow = new Date();
+  dateNow.setHours(dateNow.getHours(), 0, 0, 0);
+
+  const hoursElapsed = Math.floor(
+    (dateNow.getTime() - lastUpdate.getTime()) / (60 * 60 * 1000),
+  );
 };
