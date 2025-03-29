@@ -21,4 +21,17 @@ export const updateTrainProgress = async (trainId: string) => {
   const hoursElapsed = Math.floor(
     (dateNow.getTime() - lastUpdate.getTime()) / (60 * 60 * 1000),
   );
+
+  if (hoursElapsed > 0) {
+    const distance = 5; // replace with data from fn that calculate distance
+    const remainingFuel = 0; // replace with data from fn
+    await prisma.train.update({
+      where: { id: trainId },
+      data: {
+        kilometer: train.kilometer + distance,
+        fuel: remainingFuel,
+        lastUpdate: dateNow,
+      },
+    });
+  }
 };
